@@ -13,6 +13,10 @@
         android:theme="@style/Theme.ProjektLife"
         tools:targetApi="31">
         <activity
+            android:name=".obrazovky.ui.MainScreen"
+            android:exported="false"
+            android:theme="@style/Theme.ProjektLife" />
+        <activity
             android:name=".obrazovky.HomeObrazovka"
             android:exported="false"
             android:label="@string/title_activity_home_obrazovka"
