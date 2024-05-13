@@ -1,28 +1,30 @@
 package com.example.projektlife.databaza
 
-import ColorConverter
-import Kategoria
+import KategoriaDao
+import com.example.projektlife.dataclass.Kategoria
 import android.content.Context
 import androidx.room.*
 
 @Database(entities = [Kategoria::class], version = 1)
-@TypeConverters(ColorConverter::class)
 abstract class Databaza : RoomDatabase() {
     abstract fun kategoriaDao(): KategoriaDao
 
     companion object {
-        @Volatile private var instance: Databaza? = null
-        private val LOCK = Any()
+        @Volatile
+        private var INSTANCE: Databaza? = null
 
-        fun getInstance(context: Context): Databaza {
-            return instance ?: synchronized(LOCK) {
-                instance ?: buildDatabase(context).also { instance = it }
+        fun getDatabase(context: Context): Databaza {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    Databaza::class.java,
+                    "dtb"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                INSTANCE = instance
+                instance
             }
         }
-
-        private fun buildDatabase(context: Context) =
-            Room.databaseBuilder(context.applicationContext,
-                Databaza::class.java, "kategoria-database")
-                .build()
     }
 }

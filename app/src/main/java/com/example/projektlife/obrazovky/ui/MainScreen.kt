@@ -1,9 +1,10 @@
 package com.example.projektlife.obrazovky.ui
 
-import androidx.compose.foundation.Canvas
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.Scaffold
@@ -13,18 +14,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
+
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
+
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+
 import androidx.navigation.NavHostController
+
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.github.tehras.charts.piechart.PieChart
-import com.github.tehras.charts.piechart.animation.simpleChartAnimation
-import coil.compose.rememberImagePainter
+
 import com.example.projektlife.R
 
 val pieChartData = PieChartData(
@@ -68,6 +70,7 @@ fun ExpandableFloatingActionButton(navController: NavHostController) {
         }
     }
 }
+
 
 @Composable
 fun TopSection() {

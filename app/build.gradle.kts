@@ -83,4 +83,5 @@ dependencies {
     implementation ("androidx.room:room-runtime:$roomverzia")
     annotationProcessor("androidx.room:room-compiler:$roomverzia")
     implementation("androidx.room:room-ktx:$roomverzia")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 }
