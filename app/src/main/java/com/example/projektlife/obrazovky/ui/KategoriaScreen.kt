@@ -1,5 +1,7 @@
 package com.example.projektlife.obrazovky.ui
 
+import Kategoria
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.border
@@ -16,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -25,15 +25,20 @@ import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavHostController
-import com.example.projektlife.dataclass.Typ
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextField
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import com.example.projektlife.databaza.Databaza
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun KategoriaScreen(navController: NavHostController) {
+    val context = LocalContext.current
     var nazov by remember { mutableStateOf("") }
     var selectedTyp by remember { mutableStateOf(Typ.POSITIVNA) }
+    val db = remember { Databaza.getInstance(context) }
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -77,7 +82,16 @@ fun KategoriaScreen(navController: NavHostController) {
                 .border(2.dp, Color.Black)
                 .background(color = vybrataColor.value)
         )
-        Button(onClick = { /*Savovanie kategórii tu*/ }) {
+        Button(onClick = {
+            CoroutineScope(Dispatchers.IO).launch {
+            db.kategoriaDao().insertAll(
+                Kategoria(
+                    typ = selectedTyp,
+                    nazov = nazov,
+                    farba = vybrataColor.value
+                )
+            )
+        }}) {
             Text("Uložiť kategóriu")
         }
     }

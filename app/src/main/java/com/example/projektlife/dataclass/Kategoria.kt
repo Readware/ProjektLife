@@ -1,12 +1,25 @@
-package com.example.projektlife.dataclass
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import androidx.compose.ui.graphics.Color
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 
-enum class Typ {
-    POSITIVNA, NEGATIVNA, NEUTRAL
-}
+@Entity
 data class Kategoria(
-    val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val typ: Typ,
     val nazov: String,
-    val farba: Color
+    @TypeConverters(ColorConverter::class) val farba: Color
 )
+
+enum class Typ {
+    POSITIVNA, NEGATIVNA, NEUTRALNA
+}
+
+class ColorConverter {
+    @TypeConverter
+    fun fromColor(color: Color): Long = color.value.toLong()
+
+    @TypeConverter
+    fun toColor(value: Long): Color = Color(value)
+}
