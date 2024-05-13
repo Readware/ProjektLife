@@ -76,5 +76,11 @@ dependencies {
     implementation ("androidx.compose.ui:ui:<latest_version>")
     implementation ("androidx.compose.material:material:<latest_version>")
     implementation ("androidx.compose.ui:ui-tooling:<latest_version>")
+    implementation ("io.coil-kt:coil-compose:2.1.0")
+    implementation ("com.github.tehras:charts:0.2.4-alpha")
 
+    val roomverzia = "2.4.3"
+    implementation ("androidx.room:room-runtime:$roomverzia")
+    annotationProcessor("androidx.room:room-compiler:$roomverzia")
+    implementation("androidx.room:room-ktx:$roomverzia")
 }
