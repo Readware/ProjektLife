@@ -25,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 import androidx.navigation.NavHostController
-
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.github.tehras.charts.piechart.PieChart
@@ -99,7 +98,7 @@ fun BottomNavBar(
     onItemSelected: (BottomNavItem) -> Unit
 ) {
     NavigationBar {
-        BottomNavItem.values().forEach { item ->
+        BottomNavItem.entries.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.label) },
                 label = { Text(item.label) },
