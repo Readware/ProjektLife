@@ -1,12 +1,16 @@
 package com.example.projektlife.databaza
 
-import com.example.projektlife.dataclass.Kategoria
 import android.content.Context
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.example.projektlife.dataclass.Aktivita
+import com.example.projektlife.dataclass.Kategoria
 
-@Database(entities = [Kategoria::class], version = 2, exportSchema = false)
+@Database(entities = [Kategoria::class, Aktivita::class], version = 3, exportSchema = false)
 abstract class Databaza : RoomDatabase() {
     abstract fun kategoriaDao(): KategoriaDao
+    abstract fun aktivitaDao(): AktivitaDao
 
     companion object {
         @Volatile
@@ -17,9 +21,8 @@ abstract class Databaza : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     Databaza::class.java,
-                    "dtb"
-                )
-                    .fallbackToDestructiveMigration()
+                    "projektlife_database"
+                ).fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

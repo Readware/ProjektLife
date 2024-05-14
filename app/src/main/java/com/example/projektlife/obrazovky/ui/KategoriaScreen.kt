@@ -1,7 +1,6 @@
 package com.example.projektlife.obrazovky.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -22,16 +21,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.projektlife.viewmodel.KategoriaView
 import com.example.projektlife.dataclass.Kategoria
 import com.example.projektlife.enumerator.Typ
+import com.example.projektlife.viewmodel.KategoriaView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +44,7 @@ import kotlinx.coroutines.launch
 fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: KategoriaView) {
     var nazov by remember { mutableStateOf("") }
     var selectedTyp by remember { mutableStateOf(Typ.POSITIVNA) }
-    kategoriaViewModel.getAllKategorie()
+
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -73,7 +77,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
         }
         val vybrataColor: MutableState<Color> = remember { mutableStateOf(Color.Red) }
         Text("Vyberte farbu:")
-        ColorPicker(selectedColor = vybrataColor)
+        VyberFarbu(selectedColor = vybrataColor)
 
         Spacer(modifier = Modifier.height(20.dp))
         Text("Typ kategórie: ${selectedTyp.name}")
@@ -101,8 +105,8 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
     }
 }
 @Composable
-fun ColorPicker(selectedColor: MutableState<Color>) {
-    val colors = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan, Color.Magenta)
+fun VyberFarbu(selectedColor: MutableState<Color>) {
+    val colors = listOf(Color.Red, Color.Green, Color.Blue, Color(255, 165, 0), Color.Cyan, Color.Magenta)
     val scrollState = rememberScrollState()
 
     Row(modifier = Modifier.horizontalScroll(scrollState)) {
