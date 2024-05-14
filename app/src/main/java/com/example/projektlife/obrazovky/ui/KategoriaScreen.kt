@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: KategoriaView) {
     var nazov by remember { mutableStateOf("") }
     var selectedTyp by remember { mutableStateOf(Typ.POSITIVNA) }
-
+    kategoriaViewModel.getAllKategorie()
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -88,12 +88,14 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
             CoroutineScope(Dispatchers.IO).launch {
             kategoriaViewModel.addKategoria(
                 Kategoria(
-                    typ = selectedTyp,
+                    typ =  selectedTyp.toString(),
                     nazov = nazov,
-                    farba = vybrataColor.value
+                    farba = vybrataColor.value.toString()
                 )
             )
-        }}) {
+        }
+            navController.navigate("main_screen")
+        }) {
             Text("Uložiť kategóriu")
         }
     }

@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
     }
 @Composable
 fun AppNavigator() {
-
     val navController = rememberNavController()
     val db = Databaza.getDatabase(LocalContext.current.applicationContext)
     val kategoriaRepository = KategorieRepository(db.kategoriaDao())

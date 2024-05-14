@@ -1,11 +1,9 @@
 package com.example.projektlife.repository
 
-import KategoriaDao
-import androidx.room.Insert
-import androidx.room.Query
+import com.example.projektlife.databaza.KategoriaDao
 import com.example.projektlife.dataclass.Kategoria
 
-class KategorieRepository(private val kategoriaDao:KategoriaDao)
+class KategorieRepository(private val kategoriaDao: KategoriaDao)
 {
 
     suspend fun getAll() : List<Kategoria>{

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
 }
 
 android {
@@ -78,10 +79,8 @@ dependencies {
     implementation ("androidx.compose.ui:ui-tooling:<latest_version>")
     implementation ("io.coil-kt:coil-compose:2.1.0")
     implementation ("com.github.tehras:charts:0.2.4-alpha")
-
     val roomverzia = "2.4.3"
     implementation ("androidx.room:room-runtime:$roomverzia")
-    annotationProcessor("androidx.room:room-compiler:$roomverzia")
+    ksp("androidx.room:room-compiler:2.4.3")
     implementation("androidx.room:room-ktx:$roomverzia")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 }

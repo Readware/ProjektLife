@@ -1,11 +1,10 @@
 package com.example.projektlife.databaza
 
-import KategoriaDao
 import com.example.projektlife.dataclass.Kategoria
 import android.content.Context
 import androidx.room.*
 
-@Database(entities = [Kategoria::class], version = 1)
+@Database(entities = [Kategoria::class], version = 2, exportSchema = false)
 abstract class Databaza : RoomDatabase() {
     abstract fun kategoriaDao(): KategoriaDao
 
