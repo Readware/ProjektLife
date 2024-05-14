@@ -29,9 +29,8 @@ import androidx.navigation.NavHostController
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.github.tehras.charts.piechart.PieChart
-
 import com.example.projektlife.R
-import com.example.projektlife.Screen
+
 
 
 @Composable
