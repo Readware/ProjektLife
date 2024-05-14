@@ -78,7 +78,7 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
 
         Button(onClick = {
              navController.navigate("main_screen")
-            TODO("Aplikuj aktivitu")
+
         }, modifier = Modifier
             .fillMaxWidth()
             .align(Alignment.Start))

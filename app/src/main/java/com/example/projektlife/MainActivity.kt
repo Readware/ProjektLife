@@ -20,7 +20,6 @@ import com.example.projektlife.repository.DatabaseFactory
 import com.example.projektlife.repository.KategorieRepository
 import com.example.projektlife.viewmodel.KategoriaView
 
-
 sealed class Screen(val route: String) {
     object MainScreen : Screen("main_screen")
     object CreateCategory : Screen("add_kategoria")

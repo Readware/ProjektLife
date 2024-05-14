@@ -20,7 +20,7 @@ import com.example.projektlife.dataclass.Kategoria
 import com.example.projektlife.viewmodel.KategoriaView
 
 @Composable
-fun KategorieUkazka(navController: NavHostController , kategoriaView: KategoriaView = viewModel()) {
+fun KategorieZobrazenie(navController: NavHostController, kategoriaView: KategoriaView = viewModel()) {
     val uiState by kategoriaView.uiState.collectAsState()
     LazyColumn {
         items(uiState.kategorie) { kategoria ->
