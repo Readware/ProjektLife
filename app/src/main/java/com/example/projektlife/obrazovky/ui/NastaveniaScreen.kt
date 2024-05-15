@@ -1,8 +1,11 @@
 package com.example.projektlife.obrazovky.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -30,6 +33,7 @@ fun NastaveniaScreen(
     ulozeneView: UlozeneView = viewModel()
 ) {
     var selectedItem by remember { mutableStateOf(BottomNavItem.Settings) }
+    val isLandscape = isLandscape()
 
     Scaffold(
         bottomBar = {
@@ -39,7 +43,7 @@ fun NastaveniaScreen(
                     BottomNavItem.Statistics -> navController.navigate("statistics")
                     BottomNavItem.MainScreen -> navController.navigate("main_screen")
                     BottomNavItem.CategoryView -> navController.navigate("kategorie_uprava")
-                    BottomNavItem.Settings -> navController.navigate("settings")
+                    BottomNavItem.Settings -> navController.navigate("nastavenia")
                 }
             }
         }
@@ -53,44 +57,90 @@ fun NastaveniaScreen(
             Text(text = "Nastavenia", style = MaterialTheme.typography.headlineMedium)
 
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                kategoriaView.deleteAllKategorias()
-                aktivitaView.deleteAllAktivitas()
-                ulozeneView.deleteAllHistory()
-            }) {
-                Text("Vymazať všetky dáta")
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            if (isLandscape) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = {
+                            kategoriaView.deleteAllKategorias()
+                            aktivitaView.deleteAllAktivitas()
+                            ulozeneView.deleteAllHistory()
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Vymazať všetky dáta")
+                    }
 
-            Button(onClick = {
-                ulozeneView.deleteAllHistory()
-            }) {
-                Text("Vymazať históriu")
-            }
+                    Button(
+                        onClick = { ulozeneView.deleteAllHistory() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Vymazať históriu")
+                    }
+                }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
+                    Button(
+                        onClick = { kategoriaView.deleteAllKategorias() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Vymazať všetky kategórie")
+                    }
 
-            Button(onClick = {
-                kategoriaView.deleteAllKategorias()
-            }) {
-                Text("Vymazať všetky kategórie")
-            }
+                    Button(
+                        onClick = { aktivitaView.deleteAllAktivitas() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Vymazať všetky aktivity")
+                    }
+                }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Button(onClick = {
-                aktivitaView.deleteAllAktivitas()
-            }) {
-                Text("Vymazať všetky aktivity")
-            }
+                Button(onClick = { navController.popBackStack() }) {
+                    Text("Vrátiť sa")
+                }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            } else {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            kategoriaView.deleteAllKategorias()
+                            aktivitaView.deleteAllAktivitas()
+                            ulozeneView.deleteAllHistory()
+                        }
+                    ) {
+                        Text("Vymazať všetky dáta")
+                    }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { ulozeneView.deleteAllHistory() }) {
+                        Text("Vymazať históriu")
+                    }
 
-            Button(onClick = { navController.popBackStack() }) {
-                Text("Vrátiť sa")
+                    Button(onClick = { kategoriaView.deleteAllKategorias() }) {
+                        Text("Vymazať všetky kategórie")
+                    }
+
+                    Button(onClick = { aktivitaView.deleteAllAktivitas() }) {
+                        Text("Vymazať všetky aktivity")
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(onClick = { navController.popBackStack() }) {
+                        Text("Vrátiť sa")
+                    }
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.projektlife.obrazovky.ui
 
 import android.app.DatePickerDialog
+import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -76,42 +78,90 @@ fun StatisticsScreen(
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
-        ) {
-            Text("Štatistika", style = MaterialTheme.typography.headlineMedium)
-
-            Spacer(modifier = Modifier.height(16.dp))
-            LineChart(
-                ulozeneView = ulozeneView,
-                onDateSelected = { date ->
-                    selectedDate = date
+        if (isLandscape()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
+                ) {
+                    Text("Štatistika", style = MaterialTheme.typography.headlineMedium)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row {
+                        DatePicker(
+                            label = "Počiatočný dátum",
+                            selectedDate = startDate,
+                            onDateSelected = { newStartDate ->
+                                startDate = newStartDate
+                                ulozeneView.getUlozeneByDateRange(startDate, endDate)
+                            }
+                        )
+                        DatePicker(
+                            label = "Konečný dátum",
+                            selectedDate = endDate,
+                            onDateSelected = { newEndDate ->
+                                endDate = newEndDate
+                                ulozeneView.getUlozeneByDateRange(startDate, endDate)
+                            }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    CategoryList(ulozeneView = ulozeneView, selectedDate = selectedDate)
                 }
-            )
-            Row {
-                DatePicker(
-                    label = "Počiatočný dátum",
-                    selectedDate = startDate,
-                    onDateSelected = { newStartDate ->
-                        startDate = newStartDate
-                        ulozeneView.getUlozeneByDateRange(startDate, endDate)
-                    }
-                )
-                DatePicker(
-                    label = "Konečný dátum",
-                    selectedDate = endDate,
-                    onDateSelected = { newEndDate ->
-                        endDate = newEndDate
-                        ulozeneView.getUlozeneByDateRange(startDate, endDate)
-                    }
-                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp)
+                ) {
+                    LineChart(
+                        ulozeneView = ulozeneView,
+                        onDateSelected = { date ->
+                            selectedDate = date
+                        }
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            CategoryList(ulozeneView = ulozeneView  , selectedDate = selectedDate)
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp)
+            ) {
+                Text("Štatistika", style = MaterialTheme.typography.headlineMedium)
+                Spacer(modifier = Modifier.height(16.dp))
+                LineChart(
+                    ulozeneView = ulozeneView,
+                    onDateSelected = { date ->
+                        selectedDate = date
+                    }
+                )
+                Row {
+                    DatePicker(
+                        label = "Počiatočný dátum",
+                        selectedDate = startDate,
+                        onDateSelected = { newStartDate ->
+                            startDate = newStartDate
+                            ulozeneView.getUlozeneByDateRange(startDate, endDate)
+                        }
+                    )
+                    DatePicker(
+                        label = "Konečný dátum",
+                        selectedDate = endDate,
+                        onDateSelected = { newEndDate ->
+                            endDate = newEndDate
+                            ulozeneView.getUlozeneByDateRange(startDate, endDate)
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                CategoryList(ulozeneView = ulozeneView, selectedDate = selectedDate)
+            }
         }
     }
 }
@@ -275,3 +325,8 @@ fun getEndOfMonth(): Date {
 }
 
 
+@Composable
+fun isLandscape(): Boolean {
+    val configuration = LocalConfiguration.current
+    return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+}

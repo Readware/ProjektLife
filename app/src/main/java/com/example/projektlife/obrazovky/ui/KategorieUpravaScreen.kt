@@ -43,6 +43,7 @@ fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: Kateg
     var showDialog by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(BottomNavItem.CategoryView) }
     kategoriaView.getAllKategorias()
+
     if (showDialog) {
         DialogVymazatKategoriu(
             onConfirm = {
@@ -60,7 +61,7 @@ fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: Kateg
                 when (item) {
                     BottomNavItem.Statistics -> navController.navigate("statistics")
                     BottomNavItem.MainScreen -> navController.navigate("main_screen")
-                    BottomNavItem.CategoryView -> navController.navigate("kategorie_uprava")
+                    BottomNavItem.CategoryView -> navController.navigate("kategoria_uprava")
                     BottomNavItem.Settings -> navController.navigate("nastavenia")
                 }
             })
@@ -72,11 +73,19 @@ fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: Kateg
                 .padding(horizontal = 16.dp, vertical = 30.dp)
                 .padding(innerPadding)
         ) {
+            if(isLandscape()){
+                Row{
+                Text(text = "Kategórie", style = androidx.compose.material.MaterialTheme.typography.h4)
+                    Button(onClick = { showDialog = true }, colors = ButtonDefaults.buttonColors(Color.Red)) {
+                        Text(text = "Vymazať všetky kategórie")
+                    }
+                }
+            }else{
             Text(text = "Kategórie", style = androidx.compose.material.MaterialTheme.typography.h4)
             Text("Kliknutím upravíte kategóriu a posunutím ju môžte vymazať")
             Button(onClick = { showDialog = true }, colors = ButtonDefaults.buttonColors(Color.Red)) {
                 Text(text = "Vymazať všetky kategórie")
-            }
+            }}
             LazyColumn {
                 items(uiState.kategorie) { kategoria ->
                     SwipeableKategoriaItem(

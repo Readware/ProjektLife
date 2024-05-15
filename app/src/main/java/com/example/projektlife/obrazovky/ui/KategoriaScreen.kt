@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
@@ -44,66 +46,137 @@ import kotlinx.coroutines.launch
 fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: KategoriaView) {
     var nazov by remember { mutableStateOf("") }
     var selectedTyp by remember { mutableStateOf(Typ.POSITIVNA) }
+    val isLandscape = isLandscape()
 
-
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 50.dp, start = 10.dp, end = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Text("Vytvoriť novú kategóriu", style = MaterialTheme.typography.h4)
-
-        TextField(
-            value = nazov,
-            onValueChange = { nazov = it },
-            label = { Text("Zadajte názov kategórie") },
-            placeholder = { Text("Zadajte názov kategórie", color = Color.Gray) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+    if (isLandscape) {
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        )
-        Row {
-            Typ.values().forEach { type ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = type == selectedTyp,
-                        onClick = { selectedTyp = type }
-                    )
-                    Text(text = type.name.capitalize())
+                .fillMaxSize()
+                .padding(horizontal = 30.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text("Vytvoriť novú kategóriu", style = MaterialTheme.typography.h4)
+                Spacer(modifier = Modifier.height(10.dp))
+                TextField(
+                    value = nazov,
+                    onValueChange = { nazov = it },
+                    label = { Text("Zadajte názov kategórie") },
+                    placeholder = { Text("Zadajte názov kategórie", color = Color.Gray) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    Typ.values().forEach { type ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            RadioButton(
+                                selected = type == selectedTyp,
+                                onClick = { selectedTyp = type }
+                            )
+                            Text(text = type.name.capitalize())
+                        }
+                    }
+                }
+                val vybrataColor: MutableState<Color> = remember { mutableStateOf(Color.Red) }
+                Spacer(modifier = Modifier.height(10.dp))
+                Text("Vyberte farbu:")
+                VyberFarbu(selectedColor = vybrataColor)
+                Spacer(modifier = Modifier.height(20.dp))
+                Text("Typ kategórie: ${selectedTyp.name}")
+                Text("Názov kategórie: $nazov")
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .border(2.dp, Color.Black)
+                        .background(color = vybrataColor.value)
+                )
+                Row {
+                    Button(onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            kategoriaViewModel.addKategoria(
+                                Kategoria(
+                                    typ = selectedTyp.toString(),
+                                    nazov = nazov,
+                                    farba = vybrataColor.value.toString()
+                                )
+                            )
+                        }
+                        navController.navigate("main_screen")
+                    }) {
+                        Text("Uložiť kategóriu")
+                    }
                 }
             }
         }
-        val vybrataColor: MutableState<Color> = remember { mutableStateOf(Color.Red) }
-        Text("Vyberte farbu:")
-        VyberFarbu(selectedColor = vybrataColor)
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Text("Typ kategórie: ${selectedTyp.name}")
-        Text("Názov kategórie: $nazov")
-        Box(
+    } else {
+        Column(
             modifier = Modifier
-                .size(100.dp)
-                .border(2.dp, Color.Black)
-                .background(color = vybrataColor.value)
-        )
-        Button(onClick = {
-            CoroutineScope(Dispatchers.IO).launch {
-            kategoriaViewModel.addKategoria(
-                Kategoria(
-                    typ =  selectedTyp.toString(),
-                    nazov = nazov,
-                    farba = vybrataColor.value.toString()
-                )
+                .fillMaxSize()
+                .padding(horizontal = 10.dp, vertical = 50.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text("Vytvoriť novú kategóriu", style = MaterialTheme.typography.h4)
+            TextField(
+                value = nazov,
+                onValueChange = { nazov = it },
+                label = { Text("Zadajte názov kategórie") },
+                placeholder = { Text("Zadajte názov kategórie", color = Color.Gray) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                modifier = Modifier.fillMaxWidth()
             )
-        }
-            navController.navigate("main_screen")
-        }) {
-            Text("Uložiť kategóriu")
+            Row {
+                Typ.values().forEach { type ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = type == selectedTyp,
+                            onClick = { selectedTyp = type }
+                        )
+                        Text(text = type.name.capitalize())
+                    }
+                }
+            }
+            val vybrataColor: MutableState<Color> = remember { mutableStateOf(Color.Red) }
+            Text("Vyberte farbu:")
+            VyberFarbu(selectedColor = vybrataColor)
+            Spacer(modifier = Modifier.height(20.dp))
+            Text("Typ kategórie: ${selectedTyp.name}")
+            Text("Názov kategórie: $nazov")
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .border(2.dp, Color.Black)
+                    .background(color = vybrataColor.value)
+            )
+            Button(onClick = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    kategoriaViewModel.addKategoria(
+                        Kategoria(
+                            typ = selectedTyp.toString(),
+                            nazov = nazov,
+                            farba = vybrataColor.value.toString()
+                        )
+                    )
+                }
+                navController.navigate("main_screen")
+            }) {
+                Text("Uložiť kategóriu")
+            }
         }
     }
 }
+
 @Composable
 fun VyberFarbu(selectedColor: MutableState<Color>) {
     val colors = listOf(Color.Red, Color.Green, Color.Blue, Color(255, 165, 0), Color.Cyan, Color.Magenta)

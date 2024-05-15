@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
@@ -33,6 +36,7 @@ import com.example.projektlife.dataclass.Kategoria
 import com.example.projektlife.viewmodel.AktivitaView
 import com.example.projektlife.viewmodel.KategoriaView
 
+
 @Composable
 fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaView = viewModel(), aktivitaView: AktivitaView = viewModel()) {
     val uiState by kategoriaView.uiState.collectAsState()
@@ -42,55 +46,127 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
     var jednorazova by remember { mutableStateOf(false) }
     kategoriaView.getAllKategorias()
 
-    Column(modifier = Modifier
-        .padding(top = 30.dp, start = 16.dp, end = 16.dp)
-        .fillMaxSize()) {
-        Text(
-            text = "Vytvorte Aktivitu: ",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-        DropdownMenuBox(
-            options = uiState.kategorie,
-            selectedOption = selectedKategoria,
-            onOptionSelected = { selectedKategoria = it }
-        )
-        OutlinedTextField(
-            value = nazov,
-            onValueChange = { nazov = it },
-            label = { Text("Nazov") },
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-                .fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = vaha,
-            onValueChange = { vaha = it },
-            label = { Text("Váha (odporúčané od 1 - 10)") },
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-                .fillMaxWidth(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-        )
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            Checkbox(checked = jednorazova, onCheckedChange = { jednorazova = it })
-            Text("Jednorázová aktivita?")
-        }
+    val isLandscape = isLandscape()
 
-        Button(onClick = {
-            selectedKategoria?.let { kategoria ->
-                val vahaInt = vaha.toIntOrNull() ?: 5
-                aktivitaView.addAktivita(nazov, kategoria.id, vahaInt, jednorazova)
-                navController.navigate("main_screen")
+    if (isLandscape) {
+        Row(
+            modifier = Modifier
+                .padding(top = 30.dp, start = 16.dp, end = 16.dp)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 16.dp)
+            ) {
+                Text(
+                    text = "Vytvorte Aktivitu: ",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+                DropdownMenuBox(
+                    options = uiState.kategorie,
+                    selectedOption = selectedKategoria,
+                    onOptionSelected = { selectedKategoria = it }
+                )
+                OutlinedTextField(
+                    value = nazov,
+                    onValueChange = { nazov = it },
+                    label = { Text("Nazov") },
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = vaha,
+                    onValueChange = { vaha = it },
+                    label = { Text("Váha (odporúčané od 1 - 10)") },
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                )
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Checkbox(checked = jednorazova, onCheckedChange = { jednorazova = it })
+                    Text("Jednorázová aktivita?")
+                }
+                Button(
+                    onClick = {
+                        selectedKategoria?.let { kategoria ->
+                            val vahaInt = vaha.toIntOrNull() ?: 5
+                            aktivitaView.addAktivita(nazov, kategoria.id, vahaInt, jednorazova)
+                            navController.navigate("main_screen")
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Start)
+                ) {
+                    Text("Vytvor Aktivitu")
+                }
             }
-        }, modifier = Modifier
-            .fillMaxWidth()
-            .align(Alignment.Start))
-        { Text("Vytvor Aktivitu") }
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = 30.dp, start = 16.dp, end = 16.dp)
+                .fillMaxSize()
+        ) {
+            item {
+                Text(
+                    text = "Vytvorte Aktivitu: ",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                )
+                DropdownMenuBox(
+                    options = uiState.kategorie,
+                    selectedOption = selectedKategoria,
+                    onOptionSelected = { selectedKategoria = it }
+                )
+                OutlinedTextField(
+                    value = nazov,
+                    onValueChange = { nazov = it },
+                    label = { Text("Nazov") },
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = vaha,
+                    onValueChange = { vaha = it },
+                    label = { Text("Váha (odporúčané od 1 - 10)") },
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                )
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Checkbox(checked = jednorazova, onCheckedChange = { jednorazova = it })
+                    Text("Jednorázová aktivita?")
+                }
+                Button(
+                    onClick = {
+                        selectedKategoria?.let { kategoria ->
+                            val vahaInt = vaha.toIntOrNull() ?: 5
+                            aktivitaView.addAktivita(nazov, kategoria.id, vahaInt, jednorazova)
+                            navController.navigate("main_screen")
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text("Vytvor Aktivitu")
+                }
+            }
+        }
     }
 }
+
+
 @Composable
 fun DropdownMenuBox(
     options: List<Kategoria>,

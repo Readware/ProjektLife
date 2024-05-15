@@ -1,6 +1,5 @@
 package com.example.projektlife.obrazovky.ui
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -69,7 +68,6 @@ import java.util.Calendar
 import java.util.Date
 import kotlin.math.roundToInt
 
-
 @Composable
 fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = viewModel(), ulozeneViewModel: UlozeneView = viewModel()) {
     var selectedItem by remember { mutableStateOf(BottomNavItem.MainScreen) }
@@ -93,18 +91,44 @@ fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = vi
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            TopSection(ulozeneViewModel = ulozeneViewModel)
-            Box(modifier = Modifier.fillMaxSize()) {
-                AktivitaList(aktivitaView = aktivitaView, ulozeneViewModel = ulozeneViewModel)
+        if (isLandscape()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        AktivitaList(aktivitaView = aktivitaView, ulozeneViewModel = ulozeneViewModel)
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp)
+                ) {
+                    TopSection(ulozeneViewModel = ulozeneViewModel)
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                TopSection(ulozeneViewModel = ulozeneViewModel)
+                Box(modifier = Modifier.fillMaxSize()) {
+                    AktivitaList(aktivitaView = aktivitaView, ulozeneViewModel = ulozeneViewModel)
+                }
             }
         }
     }
 }
+
 @Composable
 fun AktivitaList(aktivitaView: AktivitaView, ulozeneViewModel: UlozeneView) {
     val uiState by aktivitaView.uiState.collectAsState()
@@ -123,8 +147,6 @@ fun AktivitaList(aktivitaView: AktivitaView, ulozeneViewModel: UlozeneView) {
         }
     }
 }
-
-
 
 @Composable
 fun AktivitaItem(
@@ -245,8 +267,6 @@ fun AktivitaItem(
     }
 }
 
-
-
 @Composable
 fun ExpandableFloatingActionButton(navController: NavHostController) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -270,8 +290,6 @@ fun ExpandableFloatingActionButton(navController: NavHostController) {
         }
     }
 }
-
-
 
 enum class BottomNavItem(val label: String, val icon: ImageVector) {
     Statistics("Štatistiky", Icons.Default.DateRange),
@@ -358,7 +376,3 @@ fun TopSection(ulozeneViewModel: UlozeneView) {
         )
     }
 }
-
-
-
-
