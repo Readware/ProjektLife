@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,9 +58,9 @@ fun StatisticsScreen(
     ulozeneView: UlozeneView = viewModel()
 ) {
     var selectedItem by remember { mutableStateOf(BottomNavItem.Statistics) }
-    var startDate by remember { mutableStateOf(getStartOfMonth()) }
-    var endDate by remember { mutableStateOf(getEndOfMonth()) }
-    var selectedDate by remember { mutableStateOf<Date?>(null) }
+    var startDate by rememberSaveable { mutableStateOf(getStartOfMonth()) }
+    var endDate by rememberSaveable { mutableStateOf(getEndOfMonth()) }
+    var selectedDate by rememberSaveable { mutableStateOf<Date?>(null) }
 
     LaunchedEffect(Unit) {
         ulozeneView.getUlozeneByDateRange(startDate, endDate)
@@ -122,7 +123,7 @@ fun StatisticsScreen(
                         ulozeneView = ulozeneView,
                         onDateSelected = { date ->
                             selectedDate = date
-                        }
+                        },
                     )
                 }
             }
@@ -139,7 +140,7 @@ fun StatisticsScreen(
                     ulozeneView = ulozeneView,
                     onDateSelected = { date ->
                         selectedDate = date
-                    }
+                    },
                 )
                 Row {
                     DatePicker(
@@ -195,7 +196,7 @@ fun DatePicker(label: String, selectedDate: Date, onDateSelected: (Date) -> Unit
 @Composable
 fun LineChart(
     ulozeneView: UlozeneView,
-    onDateSelected: (Date) -> Unit
+    onDateSelected: (Date) -> Unit,
 ) {
     val uiState by ulozeneView.uiState.collectAsState()
     val context = LocalContext.current
@@ -214,6 +215,7 @@ fun LineChart(
                 }
                 xAxis.granularity = 1f
                 axisLeft.granularity = 1f
+                legend.isEnabled = false
             }
         },
         update = { chart ->
@@ -224,7 +226,6 @@ fun LineChart(
                     values.groupBy { it.date }
                         .mapValues { (_, dateValues) -> dateValues.sumOf { it.vaha } }
                 }
-
 
             val dataSets = aggregatedData.map { (key, dateMap) ->
                 val entries = dateMap.mapNotNull { (dateStr, value) ->
@@ -266,7 +267,7 @@ fun LineChart(
 }
 
 @Composable
-fun CategoryList(ulozeneView: UlozeneView, selectedDate: Date?) {
+fun CategoryList(ulozeneView: UlozeneView, selectedDate: Date?, isLandscape: Boolean = false) {
     val ulozeneUiState by ulozeneView.uiState.collectAsState()
 
     val filteredUlozene = if (selectedDate != null) {
@@ -281,24 +282,48 @@ fun CategoryList(ulozeneView: UlozeneView, selectedDate: Date?) {
             values.sumOf { it.vaha }
         }
 
-    LazyColumn {
-        items(aggregatedData.entries.toList()) { (key, totalWeight) ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Canvas(
-                    modifier = Modifier.size(24.dp),
-                    onDraw = {
-                        drawCircle(color = parseColor(key.second))
-                    }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = key.first, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.weight(1f))
-                Text(text = "Váha: $totalWeight")
+    if (isLandscape) {
+        Column {
+            aggregatedData.entries.forEach { (key, totalWeight) ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    Canvas(
+                        modifier = Modifier.size(24.dp),
+                        onDraw = {
+                            drawCircle(color = parseColor(key.second))
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = key.first, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = "Váha: $totalWeight")
+                }
+            }
+        }
+    } else {
+        LazyColumn {
+            items(aggregatedData.entries.toList()) { (key, totalWeight) ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    Canvas(
+                        modifier = Modifier.size(24.dp),
+                        onDraw = {
+                            drawCircle(color = parseColor(key.second))
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = key.first, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = "Váha: $totalWeight")
+                }
             }
         }
     }
@@ -324,9 +349,9 @@ fun getEndOfMonth(): Date {
     }.time
 }
 
-
 @Composable
 fun isLandscape(): Boolean {
     val configuration = LocalConfiguration.current
     return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 }
+

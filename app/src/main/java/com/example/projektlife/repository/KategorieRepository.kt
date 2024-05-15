@@ -5,8 +5,8 @@ import com.example.projektlife.dataclass.Kategoria
 
 class KategorieRepository(private val kategoriaDao: KategoriaDao) {
 
-    suspend fun getAllKategorias(): List<Kategoria> {
-        return kategoriaDao.getAllKategorias()
+    suspend fun getAllKategorie(): List<Kategoria> {
+        return kategoriaDao.getAllKategorie()
     }
 
     suspend fun getKategoriaById(id: Int): Kategoria? {

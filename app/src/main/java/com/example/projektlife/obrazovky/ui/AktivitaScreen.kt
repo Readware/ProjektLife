@@ -14,9 +14,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
-import androidx.compose.material.DropdownMenu
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -24,6 +24,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,15 +41,13 @@ import com.example.projektlife.viewmodel.KategoriaView
 @Composable
 fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaView = viewModel(), aktivitaView: AktivitaView = viewModel()) {
     val uiState by kategoriaView.uiState.collectAsState()
-    var selectedKategoria by remember { mutableStateOf<Kategoria?>(null) }
-    var nazov by remember { mutableStateOf("") }
-    var vaha by remember { mutableStateOf("5") }
-    var jednorazova by remember { mutableStateOf(false) }
-    kategoriaView.getAllKategorias()
+    var selectedKategoria by rememberSaveable(stateSaver = kategoriaSaver) { mutableStateOf<Kategoria?>(null) }
+    var nazov by rememberSaveable { mutableStateOf("") }
+    var vaha by rememberSaveable { mutableStateOf("5") }
+    var jednorazova by rememberSaveable { mutableStateOf(false) }
+    kategoriaView.getAllKategorie()
 
-    val isLandscape = isLandscape()
-
-    if (isLandscape) {
+    if (isLandscape()) {
         Row(
             modifier = Modifier
                 .padding(top = 30.dp, start = 16.dp, end = 16.dp)
@@ -211,16 +211,43 @@ fun DropdownMenuBox(
     }
 }
 
+
 fun parseColor(colorString: String): Color {
-    val rgba = colorString
-        .removePrefix("Color(")
-        .removeSuffix(", sRGB IEC61966-2.1)")
-        .split(", ")
-        .map { it.toFloat() }
-    return if (rgba.size == 4) {
-        Color(rgba[0], rgba[1], rgba[2], rgba[3])
-    } else {
-        Color.Unspecified
+    return try {
+        val rgba = colorString
+            .removePrefix("Color(")
+            .removeSuffix(", sRGB IEC61966-2.1)")
+            .split(", ")
+            .map { it.toFloatOrNull() ?: 0f }
+        if (rgba.size == 4) {
+            Color(rgba[0], rgba[1], rgba[2], rgba[3])
+        } else {
+            Color.Unspecified
+        }
+    } catch (e: Exception) {
+        Color.Gray
     }
 }
 
+val kategoriaSaver = Saver<Kategoria?, Map<String, String>>(
+    save = {
+        it?.let { category ->
+            mapOf(
+                "id" to category.id.toString(),
+                "nazov" to category.nazov,
+                "farba" to category.farba,
+                "typ" to category.typ
+            )
+        } ?: emptyMap()
+    },
+    restore = { state ->
+        state["id"]?.toIntOrNull()?.let { id ->
+            Kategoria(
+                id = id,
+                nazov = state["nazov"] ?: "",
+                farba = state["farba"] ?: "",
+                typ = state["typ"] ?: ""
+            )
+        }
+    }
+)

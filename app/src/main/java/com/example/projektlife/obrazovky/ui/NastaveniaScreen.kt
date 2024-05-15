@@ -65,7 +65,7 @@ fun NastaveniaScreen(
                 ) {
                     Button(
                         onClick = {
-                            kategoriaView.deleteAllKategorias()
+                            kategoriaView.deleteAllKategorie()
                             aktivitaView.deleteAllAktivitas()
                             ulozeneView.deleteAllHistory()
                         },
@@ -89,7 +89,7 @@ fun NastaveniaScreen(
                         .padding(top = 8.dp)
                 ) {
                     Button(
-                        onClick = { kategoriaView.deleteAllKategorias() },
+                        onClick = { kategoriaView.deleteAllKategorie() },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text("Vymazať všetky kategórie")
@@ -115,7 +115,7 @@ fun NastaveniaScreen(
                 ) {
                     Button(
                         onClick = {
-                            kategoriaView.deleteAllKategorias()
+                            kategoriaView.deleteAllKategorie()
                             aktivitaView.deleteAllAktivitas()
                             ulozeneView.deleteAllHistory()
                         }
@@ -127,7 +127,7 @@ fun NastaveniaScreen(
                         Text("Vymazať históriu")
                     }
 
-                    Button(onClick = { kategoriaView.deleteAllKategorias() }) {
+                    Button(onClick = { kategoriaView.deleteAllKategorie() }) {
                         Text("Vymazať všetky kategórie")
                     }
 

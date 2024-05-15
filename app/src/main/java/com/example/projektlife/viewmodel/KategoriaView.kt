@@ -17,7 +17,7 @@ class KategoriaView(private val database: KategorieRepository) : ViewModel() {
     fun addKategoria(kategoria: Kategoria) {
         viewModelScope.launch {
             database.insertAll(kategoria)
-            getAllKategorias()
+            getAllKategorie()
         }
     }
 
@@ -33,15 +33,15 @@ class KategoriaView(private val database: KategorieRepository) : ViewModel() {
         }
     }
 
-    fun deleteAllKategorias() {
+    fun deleteAllKategorie() {
         viewModelScope.launch {
             database.deleteAll()
         }
     }
 
-    fun getAllKategorias() {
+    fun getAllKategorie() {
         viewModelScope.launch {
-            val tmp_kategorie = database.getAllKategorias()
+            val tmp_kategorie = database.getAllKategorie()
             _uiState.update { it.copy(kategorie = tmp_kategorie) }
         }
     }

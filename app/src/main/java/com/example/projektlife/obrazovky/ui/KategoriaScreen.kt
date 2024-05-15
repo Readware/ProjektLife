@@ -28,10 +28,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -44,9 +47,22 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: KategoriaView) {
-    var nazov by remember { mutableStateOf("") }
-    var selectedTyp by remember { mutableStateOf(Typ.POSITIVNA) }
+    var nazov by rememberSaveable { mutableStateOf("") }
+    var selectedTyp by rememberSaveable { mutableStateOf(Typ.POSITIVNA) }
     val isLandscape = isLandscape()
+
+    // Create a custom Saver for Color
+    val colorSaver = Saver<Color, Int>(
+        save = { it.toArgb() },
+        restore = { Color(it) }
+    )
+
+    // Use rememberSaveable to save and restore the color state
+    var vybrataColor by rememberSaveable(stateSaver = colorSaver) { mutableStateOf(Color.Red) }
+    val vybrataColorState = remember { mutableStateOf(vybrataColor) }
+
+    // Update the actual color when the state color changes
+    vybrataColor = vybrataColorState.value
 
     if (isLandscape) {
         Row(
@@ -77,7 +93,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
-                    Typ.values().forEach { type ->
+                    Typ.entries.forEach { type ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
                                 selected = type == selectedTyp,
@@ -87,10 +103,10 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                         }
                     }
                 }
-                val vybrataColor: MutableState<Color> = remember { mutableStateOf(Color.Red) }
+
                 Spacer(modifier = Modifier.height(10.dp))
                 Text("Vyberte farbu:")
-                VyberFarbu(selectedColor = vybrataColor)
+                VyberFarbu(selectedColor = vybrataColorState)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text("Typ kategórie: ${selectedTyp.name}")
                 Text("Názov kategórie: $nazov")
@@ -98,7 +114,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                     modifier = Modifier
                         .size(100.dp)
                         .border(2.dp, Color.Black)
-                        .background(color = vybrataColor.value)
+                        .background(color = vybrataColorState.value)
                 )
                 Row {
                     Button(onClick = {
@@ -107,7 +123,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                                 Kategoria(
                                     typ = selectedTyp.toString(),
                                     nazov = nazov,
-                                    farba = vybrataColor.value.toString()
+                                    farba = vybrataColor.toString()
                                 )
                             )
                         }
@@ -147,9 +163,8 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                     }
                 }
             }
-            val vybrataColor: MutableState<Color> = remember { mutableStateOf(Color.Red) }
             Text("Vyberte farbu:")
-            VyberFarbu(selectedColor = vybrataColor)
+            VyberFarbu(selectedColor = vybrataColorState)
             Spacer(modifier = Modifier.height(20.dp))
             Text("Typ kategórie: ${selectedTyp.name}")
             Text("Názov kategórie: $nazov")
@@ -157,7 +172,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                 modifier = Modifier
                     .size(100.dp)
                     .border(2.dp, Color.Black)
-                    .background(color = vybrataColor.value)
+                    .background(color = vybrataColorState.value)
             )
             Button(onClick = {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -165,7 +180,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                         Kategoria(
                             typ = selectedTyp.toString(),
                             nazov = nazov,
-                            farba = vybrataColor.value.toString()
+                            farba = vybrataColor.toString()
                         )
                     )
                 }

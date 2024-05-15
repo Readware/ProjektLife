@@ -42,12 +42,12 @@ fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: Kateg
     val uiState by kategoriaView.uiState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(BottomNavItem.CategoryView) }
-    kategoriaView.getAllKategorias()
+    kategoriaView.getAllKategorie()
 
     if (showDialog) {
         DialogVymazatKategoriu(
             onConfirm = {
-                kategoriaView.deleteAllKategorias()
+                kategoriaView.deleteAllKategorie()
                 showDialog = false
             },
             onDismiss = { showDialog = false }

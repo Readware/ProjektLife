@@ -10,7 +10,7 @@ import com.example.projektlife.dataclass.Kategoria
 @Dao
 interface KategoriaDao {
     @Query("SELECT * FROM Kategoria")
-    suspend fun getAllKategorias(): List<Kategoria>
+    suspend fun getAllKategorie(): List<Kategoria>
 
     @Query("SELECT * FROM Kategoria WHERE id = :id")
     suspend fun getKategoriaById(id: Int): Kategoria?

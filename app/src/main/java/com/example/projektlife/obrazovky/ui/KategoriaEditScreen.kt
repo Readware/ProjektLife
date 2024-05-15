@@ -23,9 +23,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -38,12 +42,16 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
     val kategoria = uiState.kategorie.find { it.id == kategoriaId }
 
     if (kategoria != null) {
-        var nazov by remember { mutableStateOf(kategoria.nazov) }
-        var farba by remember { mutableStateOf(kategoria.farba) }
-        var selectedColor = remember { mutableStateOf(parseColor(farba)) }
-        var typ by remember { mutableStateOf(kategoria.typ) }
+        var nazov by rememberSaveable { mutableStateOf(kategoria.nazov) }
+        var farba by rememberSaveable { mutableStateOf(kategoria.farba) }
+        val colorSaver = Saver<Color, Int>(
+            save = { it.toArgb() },
+            restore = { Color(it) }
+        )
+        var selectedColor by rememberSaveable(stateSaver = colorSaver) { mutableStateOf(parseColor(farba)) }
+        var typ by rememberSaveable { mutableStateOf(kategoria.typ) }
         val typOptions = listOf("POSITIVNA", "NEGATIVNA", "NEUTRALNA")
-        var expanded by remember { mutableStateOf(false) }
+        var expanded by rememberSaveable { mutableStateOf(false) }
 
         val isLandscape = isLandscape()
 
@@ -75,8 +83,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     Spacer(modifier = Modifier.height(16.dp))
 
                     androidx.compose.material.Text("Vyberte farbu:")
-                    VyberFarbu(selectedColor = selectedColor)
-                    Text(text = selectedColor.value.toString())
+                    VyberFarbu(selectedColor = remember { mutableStateOf(selectedColor) })
                     Spacer(modifier = Modifier.height(16.dp))
 
                     androidx.compose.material.Text("Vyberte typ:")
@@ -98,7 +105,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(onClick = {
-                        kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.value.toString(), typ = typ))
+                        kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.toString(), typ = typ))
                         navController.popBackStack()
                     }) {
                         Text("Uložiť")
@@ -129,8 +136,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     Spacer(modifier = Modifier.height(16.dp))
 
                     androidx.compose.material.Text("Vyberte farbu:")
-                    VyberFarbu(selectedColor = selectedColor)
-                    Text(text = selectedColor.value.toString())
+                    VyberFarbu(selectedColor = remember { mutableStateOf(selectedColor) })
                     Spacer(modifier = Modifier.height(16.dp))
 
                     androidx.compose.material.Text("Vyberte typ:")
@@ -152,7 +158,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(onClick = {
-                        kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.value.toString(), typ = typ))
+                        kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.toString(), typ = typ))
                         navController.popBackStack()
                     }) {
                         Text("Uložiť")
@@ -165,6 +171,6 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
             }
         }
     } else {
-        navController.popBackStack()
+        navController.navigate("kategorie_uprava")
     }
 }
