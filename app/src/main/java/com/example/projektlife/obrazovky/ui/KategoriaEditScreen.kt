@@ -1,11 +1,14 @@
 package com.example.projektlife.obrazovky.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -30,10 +33,14 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
         var nazov by remember { mutableStateOf(kategoria.nazov) }
         var farba by remember { mutableStateOf(kategoria.farba) }
         var selectedColor = remember { mutableStateOf(parseColor(farba)) }
+        var typ by remember { mutableStateOf(kategoria.typ) }
+        val typOptions = listOf("POSITIVNA", "NEGATIVNA", "NEUTRALNA")
+        var expanded by remember { mutableStateOf(false) }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 30.dp)
         ) {
             Text(text = "Upravenie Kategórie", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(8.dp))
@@ -49,15 +56,35 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
             androidx.compose.material.Text("Vyberte farbu:")
             VyberFarbu(selectedColor = selectedColor)
             Text(text = selectedColor.value.toString())
+            Spacer(modifier = Modifier.height(16.dp))
+
+            androidx.compose.material.Text("Vyberte typ:")
+            Box {
+                Button(onClick = { expanded = true }) {
+                    Text(text = typ)
+                }
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    typOptions.forEach { option ->
+                        DropdownMenuItem(onClick = {
+                            typ = option
+                            expanded = false
+                        }) {
+                            Text(text = option)
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(onClick = {
-                kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.value.toString()))
+                kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.value.toString(), typ = typ))
                 navController.popBackStack()
             }) {
-                Text("Save")
+                Text("Uložiť")
             }
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { navController.popBackStack() }) {
-                Text("Cancel")
+                Text("Zrušiť")
             }
         }
     } else {

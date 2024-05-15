@@ -6,11 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.projektlife.dataclass.Aktivita
 import com.example.projektlife.dataclass.Kategoria
+import com.example.projektlife.dataclass.Ulozene
 
-@Database(entities = [Kategoria::class, Aktivita::class], version = 3, exportSchema = false)
+@Database(entities = [Aktivita::class, Kategoria::class, Ulozene::class], version = 1)
 abstract class Databaza : RoomDatabase() {
     abstract fun kategoriaDao(): KategoriaDao
     abstract fun aktivitaDao(): AktivitaDao
+    abstract fun ulozeneDao(): UlozeneDao
 
     companion object {
         @Volatile

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
@@ -24,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -36,6 +38,7 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
     val uiState by kategoriaView.uiState.collectAsState()
     var selectedKategoria by remember { mutableStateOf<Kategoria?>(null) }
     var nazov by remember { mutableStateOf("") }
+    var vaha by remember { mutableStateOf("5") }
     var jednorazova by remember { mutableStateOf(false) }
     kategoriaView.getAllKategorias()
 
@@ -62,6 +65,15 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
                 .padding(vertical = 8.dp)
                 .fillMaxWidth()
         )
+        OutlinedTextField(
+            value = vaha,
+            onValueChange = { vaha = it },
+            label = { Text("Váha (odporúčané od 1 - 10)") },
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth(),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Checkbox(checked = jednorazova, onCheckedChange = { jednorazova = it })
             Text("Jednorázová aktivita?")
@@ -69,7 +81,8 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
 
         Button(onClick = {
             selectedKategoria?.let { kategoria ->
-                aktivitaView.addAktivita(nazov, kategoria.id, jednorazova)
+                val vahaInt = vaha.toIntOrNull() ?: 5
+                aktivitaView.addAktivita(nazov, kategoria.id, vahaInt, jednorazova)
                 navController.navigate("main_screen")
             }
         }, modifier = Modifier
@@ -78,7 +91,6 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
         { Text("Vytvor Aktivitu") }
     }
 }
-
 @Composable
 fun DropdownMenuBox(
     options: List<Kategoria>,

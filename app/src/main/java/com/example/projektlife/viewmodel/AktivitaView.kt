@@ -19,15 +19,16 @@ class AktivitaView(private val aktivitaRepository: AktivitaRepository) : ViewMod
         getAllAktivitasWithKategorie()
     }
 
-    fun addAktivita(nazov: String, kategoriaId: Int, jednorazova: Boolean) {
+    fun addAktivita(nazov: String, kategoriaId: Int, vaha: Int, jednorazova: Boolean) {
         viewModelScope.launch {
             val aktivita = Aktivita(
                 nazov = nazov,
                 kategoriaId = kategoriaId,
+                vaha = vaha,
                 jednorazova = jednorazova
             )
             aktivitaRepository.insertAll(aktivita)
-            getAllAktivitasWithKategorie() // Refresh the list after adding
+            getAllAktivitasWithKategorie()
         }
     }
 
@@ -40,18 +41,19 @@ class AktivitaView(private val aktivitaRepository: AktivitaRepository) : ViewMod
     fun deleteAktivita(aktivita: Aktivita) {
         viewModelScope.launch {
             aktivitaRepository.deleteAktivita(aktivita)
+            getAllAktivitasWithKategorie()
         }
     }
 
     fun deleteAllAktivitas() {
         viewModelScope.launch {
             aktivitaRepository.deleteAll()
+            getAllAktivitasWithKategorie()
         }
     }
     fun getAllAktivitas() {
         viewModelScope.launch {
-            val tmp_aktivity = aktivitaRepository.getAllAktivitas()
-            _uiState.update { it.copy(aktivity = tmp_aktivity) }
+            getAllAktivitasWithKategorie()
         }
     }
     private fun getAllAktivitasWithKategorie() {

@@ -23,9 +23,11 @@ import com.example.projektlife.obrazovky.ui.MainScreen
 import com.example.projektlife.repository.AktivitaRepository
 import com.example.projektlife.repository.DatabaseFactory
 import com.example.projektlife.repository.KategorieRepository
+import com.example.projektlife.repository.UlozeneRepository
 import com.example.projektlife.ui.theme.ProjektLifeTheme
 import com.example.projektlife.viewmodel.AktivitaView
 import com.example.projektlife.viewmodel.KategoriaView
+import com.example.projektlife.viewmodel.UlozeneView
 
 sealed class Screen(val route: String) {
     object MainScreen : Screen("main_screen")
@@ -51,19 +53,19 @@ class MainActivity : ComponentActivity() {
 fun AppNavigator() {
     val navController = rememberNavController()
     val context = LocalContext.current.applicationContext
-
     val db = remember { Databaza.getDatabase(context) }
 
     val kategoriaRepository = remember { KategorieRepository(db.kategoriaDao()) }
     val aktivitaRepository = remember { AktivitaRepository(db.aktivitaDao(),db.kategoriaDao()) }
-
-    val viewModelFactory = remember { DatabaseFactory(kategoriaRepository, aktivitaRepository) }
+    val ulozeneRepository = remember { UlozeneRepository(db.ulozeneDao()) }
+    val viewModelFactory = remember { DatabaseFactory(kategoriaRepository, aktivitaRepository,ulozeneRepository) }
 
     val kategoriaViewModel: KategoriaView = viewModel(factory = viewModelFactory)
     val aktivitaViewModel: AktivitaView = viewModel(factory = viewModelFactory)
+    val ulozeneViewModel: UlozeneView = viewModel(factory = viewModelFactory)
 
     NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
-        composable(Screen.MainScreen.route) { MainScreen(navController,aktivitaViewModel) }
+        composable(Screen.MainScreen.route) { MainScreen(navController,aktivitaViewModel,ulozeneViewModel) }
         composable(Screen.CreateCategory.route) {
             KategoriaScreen(navController,kategoriaViewModel)
         }

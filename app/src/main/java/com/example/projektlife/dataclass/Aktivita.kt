@@ -17,5 +17,6 @@ data class Aktivita(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nazov: String,
     val kategoriaId: Int,
+    val vaha: Int,
     val jednorazova: Boolean
 )

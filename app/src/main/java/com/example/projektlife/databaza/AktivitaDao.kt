@@ -9,8 +9,11 @@ import com.example.projektlife.dataclass.Aktivita
 
 @Dao
 interface AktivitaDao {
-    @Query("SELECT * FROM Aktivita")
+    @Query("SELECT * FROM aktivita")
     suspend fun getAllAktivitas(): List<Aktivita>
+
+    @Query("SELECT * FROM aktivita WHERE id = :id")
+    suspend fun getAktivitaById(id: Int): Aktivita?
 
     @Insert
     suspend fun insertAll(vararg aktivita: Aktivita)
@@ -21,6 +24,6 @@ interface AktivitaDao {
     @Delete
     suspend fun deleteAktivita(aktivita: Aktivita)
 
-    @Query("DELETE FROM Aktivita")
+    @Query("DELETE FROM aktivita")
     suspend fun deleteAll()
 }
