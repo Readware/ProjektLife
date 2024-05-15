@@ -18,4 +18,5 @@ class UlozeneRepository(private val ulozeneDao: UlozeneDao) {
     suspend fun deleteAll() {
         ulozeneDao.deleteAll()
     }
+
 }

@@ -31,7 +31,7 @@ class UlozeneView(private val ulozeneRepository: UlozeneRepository) : ViewModel(
                 date = dateString
             )
             ulozeneRepository.insertAll(ulozene)
-            getUlozeneByDateRange(date, date) 
+            getUlozeneByDateRange(date, date)
         }
     }
 
@@ -52,6 +52,13 @@ class UlozeneView(private val ulozeneRepository: UlozeneRepository) : ViewModel(
             val endDateString = dateFormat.format(endDate)
             val ulozene = ulozeneRepository.getUlozeneByDateRange(startDateString, endDateString)
             _uiState.update { it.copy(ulozene = ulozene) }
+        }
+    }
+    fun getUlozeneByDate(date: Date) {
+        viewModelScope.launch {
+            val DateString = dateFormat.format(date)
+            val ulozeneList = ulozeneRepository.getUlozeneByDateRange(DateString,DateString)
+            _uiState.value = _uiState.value.copy(ulozene = ulozeneList)
         }
     }
 }

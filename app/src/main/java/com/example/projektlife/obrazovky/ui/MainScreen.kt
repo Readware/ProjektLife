@@ -88,7 +88,7 @@ fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = vi
                     BottomNavItem.Statistics -> navController.navigate("statistics")
                     BottomNavItem.MainScreen -> navController.navigate("main_screen")
                     BottomNavItem.CategoryView -> navController.navigate("kategorie_uprava")
-                    BottomNavItem.Settings -> navController.navigate("settings")
+                    BottomNavItem.Settings -> navController.navigate("nastavenia")
                 }
             }
         }

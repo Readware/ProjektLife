@@ -79,6 +79,7 @@ dependencies {
     implementation ("androidx.compose.ui:ui-tooling:<latest_version>")
     implementation ("io.coil-kt:coil-compose:2.1.0")
     implementation ("com.github.tehras:charts:0.2.4-alpha")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     val roomverzia = "2.4.3"
     implementation ("androidx.room:room-runtime:$roomverzia")
     ksp("androidx.room:room-compiler:2.4.3")
