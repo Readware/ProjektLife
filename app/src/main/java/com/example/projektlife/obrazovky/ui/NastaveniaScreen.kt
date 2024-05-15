@@ -54,7 +54,10 @@ fun NastaveniaScreen(
                 .padding(innerPadding)
                 .padding(vertical = 30.dp, horizontal = 16.dp)
         ) {
-            Text(text = "Nastavenia", style = MaterialTheme.typography.headlineMedium) // Zobrazuje nadpis obrazovky
+            Text(
+                text = "Nastavenia",
+                style = MaterialTheme.typography.headlineMedium
+            ) // Zobrazuje nadpis obrazovky
 
             Spacer(modifier = Modifier.height(16.dp)) // Pridáva medzeru medzi nadpis a obsah
 

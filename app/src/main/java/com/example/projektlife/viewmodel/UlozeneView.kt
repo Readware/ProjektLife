@@ -19,7 +19,14 @@ class UlozeneView(private val ulozeneRepository: UlozeneRepository) : ViewModel(
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-    fun addUlozene(aktivitaId: Int, kategoriaId: Int, nazov: String, farba: String, vaha: Int, date: Date) {
+    fun addUlozene(
+        aktivitaId: Int,
+        kategoriaId: Int,
+        nazov: String,
+        farba: String,
+        vaha: Int,
+        date: Date
+    ) {
         viewModelScope.launch {
             val dateString = dateFormat.format(date)
             val ulozene = Ulozene(
@@ -41,11 +48,13 @@ class UlozeneView(private val ulozeneRepository: UlozeneRepository) : ViewModel(
             _uiState.update { it.copy(ulozene = ulozene) }
         }
     }
+
     fun deleteAllHistory() {
         viewModelScope.launch {
             ulozeneRepository.deleteAll()
         }
     }
+
     fun getUlozeneByDateRange(startDate: Date, endDate: Date) {
         viewModelScope.launch {
             val startDateString = dateFormat.format(startDate)
@@ -54,10 +63,11 @@ class UlozeneView(private val ulozeneRepository: UlozeneRepository) : ViewModel(
             _uiState.update { it.copy(ulozene = ulozene) }
         }
     }
+
     fun getUlozeneByDate(date: Date) {
         viewModelScope.launch {
             val DateString = dateFormat.format(date)
-            val ulozeneList = ulozeneRepository.getUlozeneByDateRange(DateString,DateString)
+            val ulozeneList = ulozeneRepository.getUlozeneByDateRange(DateString, DateString)
             _uiState.value = _uiState.value.copy(ulozene = ulozeneList)
         }
     }

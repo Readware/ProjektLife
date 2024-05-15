@@ -38,7 +38,10 @@ import com.example.projektlife.dataclass.Kategoria
 import com.example.projektlife.viewmodel.KategoriaView
 
 @Composable
-fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: KategoriaView = viewModel()) {
+fun KategorieUpravaScreen(
+    navController: NavHostController,
+    kategoriaView: KategoriaView = viewModel()
+) {
     // Získanie stavu UI z viewModelu
     val uiState by kategoriaView.uiState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
@@ -125,7 +128,8 @@ fun SwipeableKategoriaItem(kategoria: Kategoria, onDelete: () -> Unit, onClick: 
                 detectHorizontalDragGestures(
                     onHorizontalDrag = { _, dragAmount ->
                         offsetX += dragAmount
-                        offsetX = offsetX.coerceIn(-200f, 0f) // Ograničenie offsetu medzi -200f a 0f
+                        offsetX =
+                            offsetX.coerceIn(-200f, 0f) // Ograničenie offsetu medzi -200f a 0f
                     },
                     onDragEnd = {
                         if (offsetX < -100f) {

@@ -16,12 +16,15 @@ class DatabaseFactory(
             modelClass.isAssignableFrom(KategoriaView::class.java) -> {
                 KategoriaView(kategorieRepository) as T
             }
+
             modelClass.isAssignableFrom(AktivitaView::class.java) -> {
                 AktivitaView(aktivitaRepository) as T
             }
+
             modelClass.isAssignableFrom(UlozeneView::class.java) -> {
                 UlozeneView(ulozeneRepository) as T
             }
+
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }

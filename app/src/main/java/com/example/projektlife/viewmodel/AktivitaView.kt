@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AktivitaView(private val aktivitaRepository: AktivitaRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow(AktivitaUiState(aktivity = listOf(), kategorie = emptyMap()))
+    private val _uiState =
+        MutableStateFlow(AktivitaUiState(aktivity = listOf(), kategorie = emptyMap()))
     val uiState: StateFlow<AktivitaUiState> = _uiState.asStateFlow()
 
     init {
@@ -51,15 +52,18 @@ class AktivitaView(private val aktivitaRepository: AktivitaRepository) : ViewMod
             getAllAktivitasWithKategorie()
         }
     }
+
     fun getAllAktivitas() {
         viewModelScope.launch {
             getAllAktivitasWithKategorie()
         }
     }
+
     private fun getAllAktivitasWithKategorie() {
         viewModelScope.launch {
             val aktivity = aktivitaRepository.getAllAktivitas()
-            val kategorie = aktivity.map { it.kategoriaId }.distinct().associateWith { aktivitaRepository.getKategoriaById(it) }
+            val kategorie = aktivity.map { it.kategoriaId }.distinct()
+                .associateWith { aktivitaRepository.getKategoriaById(it) }
             _uiState.update { it.copy(aktivity = aktivity, kategorie = kategorie) }
         }
     }

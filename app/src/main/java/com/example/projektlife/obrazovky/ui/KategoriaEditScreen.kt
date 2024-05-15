@@ -37,7 +37,11 @@ import com.example.projektlife.viewmodel.KategoriaView
 
 
 @Composable
-fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kategoriaView: KategoriaView = viewModel()) {
+fun KategoriaEditScreen(
+    navController: NavHostController,
+    kategoriaId: Int,
+    kategoriaView: KategoriaView = viewModel()
+) {
     val uiState by kategoriaView.uiState.collectAsState()
     val kategoria = uiState.kategorie.find { it.id == kategoriaId }
 
@@ -51,7 +55,13 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
             save = { it.toArgb() }, // Uloženie farby ako integer hodnoty
             restore = { Color(it) } // Obnovenie farby z integer hodnoty
         )
-        var selectedColor by rememberSaveable(stateSaver = colorSaver) { mutableStateOf(parseColor(farba)) }
+        var selectedColor by rememberSaveable(stateSaver = colorSaver) {
+            mutableStateOf(
+                parseColor(
+                    farba
+                )
+            )
+        }
         var typ by rememberSaveable { mutableStateOf(kategoria.typ) }
         val typOptions = listOf("POSITIVNA", "NEGATIVNA", "NEUTRALNA")
         var expanded by rememberSaveable { mutableStateOf(false) }
@@ -74,7 +84,10 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                         .padding(end = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Upravenie Kategórie", style = MaterialTheme.typography.headlineMedium)
+                    Text(
+                        text = "Upravenie Kategórie",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     TextField(
@@ -111,7 +124,13 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
 
                     // Tlačidlo pre uloženie zmien
                     Button(onClick = {
-                        kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.toString(), typ = typ))
+                        kategoriaView.updateKategoria(
+                            kategoria.copy(
+                                nazov = nazov,
+                                farba = selectedColor.toString(),
+                                typ = typ
+                            )
+                        )
                         navController.popBackStack()
                     }) {
                         Text("Uložiť")
@@ -130,7 +149,10 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     .fillMaxSize()
             ) {
                 item {
-                    Text(text = "Upravenie Kategórie", style = MaterialTheme.typography.headlineMedium)
+                    Text(
+                        text = "Upravenie Kategórie",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     TextField(
@@ -167,7 +189,13 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
 
                     // Tlačidlo pre uloženie zmien
                     Button(onClick = {
-                        kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.toString(), typ = typ))
+                        kategoriaView.updateKategoria(
+                            kategoria.copy(
+                                nazov = nazov,
+                                farba = selectedColor.toString(),
+                                typ = typ
+                            )
+                        )
                         navController.popBackStack()
                     }) {
                         Text("Uložiť")

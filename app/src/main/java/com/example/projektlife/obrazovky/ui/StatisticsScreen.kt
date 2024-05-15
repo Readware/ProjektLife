@@ -112,7 +112,11 @@ fun StatisticsScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    CategoryList(ulozeneView = ulozeneView, selectedDate = selectedDate, isLandscape = true)
+                    CategoryList(
+                        ulozeneView = ulozeneView,
+                        selectedDate = selectedDate,
+                        isLandscape = true
+                    )
                 }
                 Column(
                     modifier = Modifier
@@ -169,7 +173,11 @@ fun StatisticsScreen(
 }
 
 @Composable
-fun DatePicker(label: String, selectedDate: Date, onDateSelected: (Date) -> Unit) {//Funkcia pre výber dátumu, a jeho zobrazenie na tlačítku po vybratí
+fun DatePicker(
+    label: String,
+    selectedDate: Date,
+    onDateSelected: (Date) -> Unit
+) {//Funkcia pre výber dátumu, a jeho zobrazenie na tlačítku po vybratí
     val context = LocalContext.current
     val calendar = Calendar.getInstance().apply { time = selectedDate }
 
@@ -214,7 +222,8 @@ fun LineChart(//Zobrazenie čiarového grafu
                         return dateFormat.format(Date(value.toLong()))
                     }
                 }
-                xAxis.granularity = 1f//Pre jednoduchšie kliknutie na dátum pre zobrazenie vlastnej legendy z váhami
+                xAxis.granularity =
+                    1f//Pre jednoduchšie kliknutie na dátum pre zobrazenie vlastnej legendy z váhami
                 axisLeft.granularity = 1f
                 legend.isEnabled = false // Skryje legendu pod grafom
             }
@@ -247,11 +256,16 @@ fun LineChart(//Zobrazenie čiarového grafu
             chart.data = LineData(dataSets)
             chart.invalidate()
 
-            chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {//Ukáže legendu pre daný deň
+            chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+                //Ukáže legendu pre daný deň
                 override fun onValueSelected(e: Entry?, h: Highlight?) {
                     e?.let {
                         val selectedDate = Date(it.x.toLong())
-                        if (uiState.ulozene.any { ulozene -> ulozene.date == dateFormat.format(selectedDate) }) {
+                        if (uiState.ulozene.any { ulozene ->
+                                ulozene.date == dateFormat.format(
+                                    selectedDate
+                                )
+                            }) {
                             onDateSelected(selectedDate)
                         }
                     }
@@ -268,7 +282,11 @@ fun LineChart(//Zobrazenie čiarového grafu
 }
 
 @Composable
-fun CategoryList(ulozeneView: UlozeneView, selectedDate: Date?, isLandscape: Boolean = false) {//Ukážka legendy pre grafy
+fun CategoryList(
+    ulozeneView: UlozeneView,
+    selectedDate: Date?,
+    isLandscape: Boolean = false
+) {//Ukážka legendy pre grafy
     val ulozeneUiState by ulozeneView.uiState.collectAsState()
 
     val filteredUlozene = if (selectedDate != null) {

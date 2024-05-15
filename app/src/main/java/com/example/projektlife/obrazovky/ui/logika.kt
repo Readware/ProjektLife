@@ -29,7 +29,8 @@ fun isLandscape(): Boolean {//hovorí o tom či je mobil otočený horizontálne
 
 @Composable//Vytvára menu pre výber farby
 fun VyberFarbu(selectedColor: MutableState<Color>) {
-    val colors = listOf(Color.Red, Color.Green, Color.Blue, Color(255, 165, 0), Color.Cyan, Color.Magenta)
+    val colors =
+        listOf(Color.Red, Color.Green, Color.Blue, Color(255, 165, 0), Color.Cyan, Color.Magenta)
     val scrollState = rememberScrollState()
 
     Row(modifier = Modifier.horizontalScroll(scrollState)) {
@@ -49,6 +50,7 @@ fun VyberFarbu(selectedColor: MutableState<Color>) {
         }
     }
 }
+
 fun getStartOfMonth(): Date { //Ukáže začiatok terajšieho mesiaca
     return Calendar.getInstance().apply {
         set(Calendar.DAY_OF_MONTH, 1)

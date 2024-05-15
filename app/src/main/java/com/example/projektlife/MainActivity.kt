@@ -64,7 +64,8 @@ fun AppNavigator() {
     val kategoriaRepository = remember { KategorieRepository(db.kategoriaDao()) }
     val aktivitaRepository = remember { AktivitaRepository(db.aktivitaDao(), db.kategoriaDao()) }
     val ulozeneRepository = remember { UlozeneRepository(db.ulozeneDao()) }
-    val viewModelFactory = remember { DatabaseFactory(kategoriaRepository, aktivitaRepository, ulozeneRepository) }
+    val viewModelFactory =
+        remember { DatabaseFactory(kategoriaRepository, aktivitaRepository, ulozeneRepository) }
 
     val kategoriaViewModel: KategoriaView = viewModel(factory = viewModelFactory)
     val aktivitaViewModel: AktivitaView = viewModel(factory = viewModelFactory)
@@ -82,7 +83,12 @@ fun AppNavigator() {
             KategorieUpravaScreen(navController = navController, kategoriaViewModel)
         }
         composable(Screen.Nastavenia.route) {
-            NastaveniaScreen(navController = navController, kategoriaViewModel, aktivitaViewModel, ulozeneViewModel)
+            NastaveniaScreen(
+                navController = navController,
+                kategoriaViewModel,
+                aktivitaViewModel,
+                ulozeneViewModel
+            )
         }
         // Definícia obrazovky pre editáciu kategórie s argumentom kategoriaId
         composable(
@@ -90,7 +96,11 @@ fun AppNavigator() {
             arguments = listOf(navArgument("kategoriaId") { type = NavType.IntType })
         ) { backStackEntry ->
             val kategoriaId = backStackEntry.arguments?.getInt("kategoriaId") ?: return@composable
-            KategoriaEditScreen(navController = navController, kategoriaId = kategoriaId, kategoriaViewModel)
+            KategoriaEditScreen(
+                navController = navController,
+                kategoriaId = kategoriaId,
+                kategoriaViewModel
+            )
         }
         composable(Screen.Statistika.route) {
             StatisticsScreen(navController = navController, ulozeneViewModel)

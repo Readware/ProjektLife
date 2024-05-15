@@ -65,7 +65,11 @@ import java.util.Date
 import kotlin.math.roundToInt
 
 @Composable
-fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = viewModel(), ulozeneViewModel: UlozeneView = viewModel()) {
+fun MainScreen(
+    navController: NavHostController,
+    aktivitaView: AktivitaView = viewModel(),
+    ulozeneViewModel: UlozeneView = viewModel()
+) {
     var selectedItem by remember { mutableStateOf(BottomNavItem.MainScreen) }
 
 
@@ -101,7 +105,10 @@ fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = vi
                         .padding(end = 8.dp)
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        AktivitaList(aktivitaView = aktivitaView, ulozeneViewModel = ulozeneViewModel)
+                        AktivitaList(
+                            aktivitaView = aktivitaView,
+                            ulozeneViewModel = ulozeneViewModel
+                        )
                     }
                 }
                 Column(
@@ -131,16 +138,19 @@ fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = vi
 @Composable
 fun AktivitaList(aktivitaView: AktivitaView, ulozeneViewModel: UlozeneView) {
     val uiState by aktivitaView.uiState.collectAsState()
-
+    var padd = 0.dp
+    if (isLandscape()) {
+        padd = 30.dp
+    }
     // Zobrazenie zoznamu aktivít
-    LazyColumn {
+    LazyColumn(modifier = Modifier.padding(top = padd)) {
         items(uiState.aktivity) { aktivita ->
             val kategoria = uiState.kategorie[aktivita.kategoriaId]
             AktivitaItem(
                 aktivita = aktivita,
                 kategoria = kategoria,
                 onDelete = { aktivitaView.deleteAktivita(aktivita) },
-                onClick = {  },
+                onClick = { },
                 ulozeneViewModel = ulozeneViewModel,
                 aktivitaViewModel = aktivitaView
             )
@@ -214,15 +224,22 @@ fun AktivitaItem(
             Spacer(modifier = Modifier.width(8.dp))
 
             Column {
-                Text(text = aktivita.nazov, style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold))
+                Text(
+                    text = aktivita.nazov,
+                    style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold)
+                )
                 Text(text = "Váha: ${aktivita.vaha}", style = MaterialTheme.typography.body2)
-                Text(text = "Kategória: ${kategoria?.nazov}", style = MaterialTheme.typography.body2)
+                Text(
+                    text = "Kategória: ${kategoria?.nazov}",
+                    style = MaterialTheme.typography.body2
+                )
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
             val buttonColor = kategoria?.farba?.let { parseColor(it) } ?: Color.Gray
-            val buttonIcon = if (aktivita.jednorazova) Icons.Default.Add else Icons.Default.AddCircle
+            val buttonIcon =
+                if (aktivita.jednorazova) Icons.Default.Add else Icons.Default.AddCircle
 
             IconButton(onClick = {
                 val today = Date()
@@ -296,7 +313,8 @@ fun ExpandableFloatingActionButton(navController: NavHostController) {//Tlačít
     }
 }
 
-enum class BottomNavItem(val label: String, val icon: ImageVector) {//Obrázky pre menu na navigáciu aplikáciou
+enum class BottomNavItem(val label: String, val icon: ImageVector) {
+    //Obrázky pre menu na navigáciu aplikáciou
     Statistics("Štatistiky", Icons.Default.DateRange),
     MainScreen("Domov", Icons.Default.Home),
     CategoryView("Kategórie", Icons.Default.List),
@@ -343,20 +361,24 @@ fun TopSection(ulozeneViewModel: UlozeneView) {
         ulozeneViewModel.getUlozeneByDateRange(startDate, endDate)
     }
 
-    val pieChartData = if (uiState.ulozene.isNotEmpty()) {//Špecifikácia dát pre zobrazenie koláčovým grafom
-        PieChartData(
-            slices = uiState.ulozene.groupBy { it.kategoriaId }.map { (kategoriaId, ulozene) ->
-                val totalWeight = ulozene.sumOf { it.vaha }
-                PieChartData.Slice(value = totalWeight.toFloat(), color = parseColor(ulozene.first().farba))
-            }
-        )
-    } else {
-        PieChartData(
-            slices = listOf(
-                PieChartData.Slice(value = 1f, color = Color.Gray)
+    val pieChartData =
+        if (uiState.ulozene.isNotEmpty()) {//Špecifikácia dát pre zobrazenie koláčovým grafom
+            PieChartData(
+                slices = uiState.ulozene.groupBy { it.kategoriaId }.map { (kategoriaId, ulozene) ->
+                    val totalWeight = ulozene.sumOf { it.vaha }
+                    PieChartData.Slice(
+                        value = totalWeight.toFloat(),
+                        color = parseColor(ulozene.first().farba)
+                    )
+                }
             )
-        )
-    }
+        } else {
+            PieChartData(
+                slices = listOf(
+                    PieChartData.Slice(value = 1f, color = Color.Gray)
+                )
+            )
+        }
 
     // Box komponent pre zobrazenie koláčového grafu
     Box(

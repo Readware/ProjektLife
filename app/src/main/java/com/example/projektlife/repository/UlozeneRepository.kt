@@ -15,6 +15,7 @@ class UlozeneRepository(private val ulozeneDao: UlozeneDao) {
     suspend fun insertAll(vararg ulozene: Ulozene) {
         ulozeneDao.insertAll(*ulozene)
     }
+
     suspend fun deleteAll() {
         ulozeneDao.deleteAll()
     }

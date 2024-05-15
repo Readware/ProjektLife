@@ -39,12 +39,20 @@ import com.example.projektlife.viewmodel.AktivitaView
 import com.example.projektlife.viewmodel.KategoriaView
 
 @Composable
-fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaView = viewModel(), aktivitaView: AktivitaView = viewModel()) {
+fun AktivitaScreen(
+    navController: NavHostController,
+    kategoriaView: KategoriaView = viewModel(),
+    aktivitaView: AktivitaView = viewModel()
+) {
     // Získavame stav kategórií z viewModelu
     val uiState by kategoriaView.uiState.collectAsState()
 
     // Ukladáme si vybratú kategóriu, názov, váhu a boolean pre jednorazovú aktivitu
-    var selectedKategoria by rememberSaveable(stateSaver = kategoriaSaver) { mutableStateOf<Kategoria?>(null) }
+    var selectedKategoria by rememberSaveable(stateSaver = kategoriaSaver) {
+        mutableStateOf<Kategoria?>(
+            null
+        )
+    }
     var nazov by rememberSaveable { mutableStateOf("") }
     var vaha by rememberSaveable { mutableStateOf("5") }
     var jednorazova by rememberSaveable { mutableStateOf(false) }
@@ -95,7 +103,10 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
                         .fillMaxWidth(),
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Checkbox(checked = jednorazova, onCheckedChange = { jednorazova = it })
                     Text("Jednorázová aktivita?")
                 }
@@ -152,7 +163,10 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
                         .fillMaxWidth(),
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Checkbox(checked = jednorazova, onCheckedChange = { jednorazova = it })
                     Text("Jednorázová aktivita?")
                 }
@@ -184,7 +198,8 @@ fun DropdownMenuBox(//Funkcia ktorá vytvorí vysúvacie menu pre vyber kategór
     var expanded by remember { mutableStateOf(false) }
 
     Box {
-        val buttonText = if (options.isEmpty()) "Vytvorte kategóriu" else (selectedOption?.nazov ?: "Vyberte kategóriu")//v prípade že neexistujú kategórie prejde do obrazovky kde vytvorí užívateľ novú
+        val buttonText = if (options.isEmpty()) "Vytvorte kategóriu" else (selectedOption?.nazov
+            ?: "Vyberte kategóriu")//v prípade že neexistujú kategórie prejde do obrazovky kde vytvorí užívateľ novú
         Button(
             onClick = {
                 if (options.isEmpty()) {
@@ -193,7 +208,12 @@ fun DropdownMenuBox(//Funkcia ktorá vytvorí vysúvacie menu pre vyber kategór
                     expanded = true
                 }
             },
-            colors = ButtonDefaults.buttonColors(backgroundColor = selectedOption?.let { parseColor(it.farba) } ?: Color.Gray),//použije funkciu vytvorenú pre parsovanie farby, ak nevyjde premena farba bude sivá
+            colors = ButtonDefaults.buttonColors(backgroundColor = selectedOption?.let {
+                parseColor(
+                    it.farba
+                )
+            }
+                ?: Color.Gray),//použije funkciu vytvorenú pre parsovanie farby, ak nevyjde premena farba bude sivá
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.Center)
