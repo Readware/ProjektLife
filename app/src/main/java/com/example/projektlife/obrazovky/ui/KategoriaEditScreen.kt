@@ -42,11 +42,14 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
     val kategoria = uiState.kategorie.find { it.id == kategoriaId }
 
     if (kategoria != null) {
+        // Uloženie pôvodných hodnôt kategórie pomocou rememberSaveable
         var nazov by rememberSaveable { mutableStateOf(kategoria.nazov) }
         var farba by rememberSaveable { mutableStateOf(kategoria.farba) }
+
+        // Saver pre ukladanie a obnovovanie objektu Color
         val colorSaver = Saver<Color, Int>(
-            save = { it.toArgb() },
-            restore = { Color(it) }
+            save = { it.toArgb() }, // Uloženie farby ako integer hodnoty
+            restore = { Color(it) } // Obnovenie farby z integer hodnoty
         )
         var selectedColor by rememberSaveable(stateSaver = colorSaver) { mutableStateOf(parseColor(farba)) }
         var typ by rememberSaveable { mutableStateOf(kategoria.typ) }
@@ -56,11 +59,12 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
         val isLandscape = isLandscape()
 
         if (isLandscape) {
+            // Layout pre landscape mód
             Row(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 30.dp)
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState()), // Vertikálny scroll pre landscape aby sa dali zobraziť všetky prvky
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -83,6 +87,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     Spacer(modifier = Modifier.height(16.dp))
 
                     androidx.compose.material.Text("Vyberte farbu:")
+                    // Komponent pre výber farby
                     VyberFarbu(selectedColor = remember { mutableStateOf(selectedColor) })
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -104,6 +109,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Tlačidlo pre uloženie zmien
                     Button(onClick = {
                         kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.toString(), typ = typ))
                         navController.popBackStack()
@@ -117,6 +123,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                 }
             }
         } else {
+            // Layout pre portrait mód
             LazyColumn(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 30.dp)
@@ -136,6 +143,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     Spacer(modifier = Modifier.height(16.dp))
 
                     androidx.compose.material.Text("Vyberte farbu:")
+                    // Komponent pre výber farby
                     VyberFarbu(selectedColor = remember { mutableStateOf(selectedColor) })
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -157,6 +165,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Tlačidlo pre uloženie zmien
                     Button(onClick = {
                         kategoriaView.updateKategoria(kategoria.copy(nazov = nazov, farba = selectedColor.toString(), typ = typ))
                         navController.popBackStack()
@@ -171,6 +180,7 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
             }
         }
     } else {
-        navController.navigate("kategorie_uprava")
+        navController.navigate("kategorie_uprava")//Ak by sa náhodou dostala neplatná kategória do úpravy vráti sa naspät
     }
 }
+

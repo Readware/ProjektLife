@@ -40,14 +40,20 @@ import com.example.projektlife.viewmodel.KategoriaView
 
 @Composable
 fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaView = viewModel(), aktivitaView: AktivitaView = viewModel()) {
+    // Získavame stav kategórií z viewModelu
     val uiState by kategoriaView.uiState.collectAsState()
+
+    // Ukladáme si vybratú kategóriu, názov, váhu a boolean pre jednorazovú aktivitu
     var selectedKategoria by rememberSaveable(stateSaver = kategoriaSaver) { mutableStateOf<Kategoria?>(null) }
     var nazov by rememberSaveable { mutableStateOf("") }
     var vaha by rememberSaveable { mutableStateOf("5") }
     var jednorazova by rememberSaveable { mutableStateOf(false) }
+
+    // Načítavame všetky kategórie
     kategoriaView.getAllKategorie()
 
     if (isLandscape()) {
+        // Ak je zariadenie v landscape móde
         Row(
             modifier = Modifier
                 .padding(top = 30.dp, start = 16.dp, end = 16.dp)
@@ -110,6 +116,7 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
             }
         }
     } else {
+        // Ak je zariadenie v portrait móde
         LazyColumn(
             modifier = Modifier
                 .padding(top = 30.dp, start = 16.dp, end = 16.dp)
@@ -168,7 +175,7 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
 }
 
 @Composable
-fun DropdownMenuBox(
+fun DropdownMenuBox(//Funkcia ktorá vytvorí vysúvacie menu pre vyber kategórie po kliknutí na tlačidlo
     options: List<Kategoria>,
     selectedOption: Kategoria?,
     onOptionSelected: (Kategoria) -> Unit,
@@ -177,7 +184,7 @@ fun DropdownMenuBox(
     var expanded by remember { mutableStateOf(false) }
 
     Box {
-        val buttonText = if (options.isEmpty()) "Vytvorte kategóriu" else (selectedOption?.nazov ?: "Vyberte kategóriu")
+        val buttonText = if (options.isEmpty()) "Vytvorte kategóriu" else (selectedOption?.nazov ?: "Vyberte kategóriu")//v prípade že neexistujú kategórie prejde do obrazovky kde vytvorí užívateľ novú
         Button(
             onClick = {
                 if (options.isEmpty()) {
@@ -186,19 +193,19 @@ fun DropdownMenuBox(
                     expanded = true
                 }
             },
-            colors = ButtonDefaults.buttonColors(backgroundColor = selectedOption?.let { parseColor(it.farba) } ?: Color.Gray),
+            colors = ButtonDefaults.buttonColors(backgroundColor = selectedOption?.let { parseColor(it.farba) } ?: Color.Gray),//použije funkciu vytvorenú pre parsovanie farby, ak nevyjde premena farba bude sivá
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.Center)
         ) {
             Text(buttonText)
         }
-        DropdownMenu(
+        DropdownMenu(//vysúvacie menu
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
             options.forEach { option ->
-                DropdownMenuItem(
+                DropdownMenuItem(//jeho prvky
                     onClick = {
                         onOptionSelected(option)
                         expanded = false
@@ -211,7 +218,7 @@ fun DropdownMenuBox(
     }
 }
 
-
+// Funkcia na parsovanie farby z reťazca na objekt Color
 fun parseColor(colorString: String): Color {
     return try {
         val rgba = colorString
@@ -219,18 +226,19 @@ fun parseColor(colorString: String): Color {
             .removeSuffix(", sRGB IEC61966-2.1)")
             .split(", ")
             .map { it.toFloatOrNull() ?: 0f }
-        if (rgba.size == 4) {
+        if (rgba.size == 4) {//pole rgba musí mať presne 4 prvky inak nieje možné ho použiť, ak by náhodou stále niečo nevyšlo vráti šedú farbu
             Color(rgba[0], rgba[1], rgba[2], rgba[3])
         } else {
-            Color.Unspecified
+            Color.Unspecified //Vráti neznámu, farbu ak je vzorec zlý
         }
     } catch (e: Exception) {
         Color.Gray
     }
 }
 
+// Saver objekt pre ukladanie a obnovu stavu objektu Kategoria
 val kategoriaSaver = Saver<Kategoria?, Map<String, String>>(
-    save = {
+    save = { //Rozkladanie kategórie pre uloženie
         it?.let { category ->
             mapOf(
                 "id" to category.id.toString(),
@@ -240,7 +248,7 @@ val kategoriaSaver = Saver<Kategoria?, Map<String, String>>(
             )
         } ?: emptyMap()
     },
-    restore = { state ->
+    restore = { state ->    //Skladanie kategórie naspať do pôvodného stavu
         state["id"]?.toIntOrNull()?.let { id ->
             Kategoria(
                 id = id,

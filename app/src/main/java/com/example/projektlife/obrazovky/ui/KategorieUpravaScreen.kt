@@ -39,11 +39,14 @@ import com.example.projektlife.viewmodel.KategoriaView
 
 @Composable
 fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: KategoriaView = viewModel()) {
+    // Získanie stavu UI z viewModelu
     val uiState by kategoriaView.uiState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(BottomNavItem.CategoryView) }
+    // Načítanie všetkých kategórií z viewModelu
     kategoriaView.getAllKategorie()
 
+    // Zobrazenie dialógu na vymazanie všetkých kategórií
     if (showDialog) {
         DialogVymazatKategoriu(
             onConfirm = {
@@ -54,6 +57,7 @@ fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: Kateg
         )
     }
 
+    // Scaffold komponent pre layout
     Scaffold(
         bottomBar = {
             BottomNavBar(selectedItem = selectedItem, onItemSelected = { item ->
@@ -73,19 +77,29 @@ fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: Kateg
                 .padding(horizontal = 16.dp, vertical = 30.dp)
                 .padding(innerPadding)
         ) {
-            if(isLandscape()){
-                Row{
-                Text(text = "Kategórie", style = androidx.compose.material.MaterialTheme.typography.h4)
-                    Button(onClick = { showDialog = true }, colors = ButtonDefaults.buttonColors(Color.Red)) {
+            // Skontrolovanie, či je zariadenie v landscape móde
+            if (isLandscape()) {
+                Row {
+                    Text(text = "Kategórie", style = MaterialTheme.typography.headlineMedium)
+                    Button(
+                        onClick = { showDialog = true },
+                        colors = ButtonDefaults.buttonColors(Color.Red)
+                    ) {
                         Text(text = "Vymazať všetky kategórie")
                     }
                 }
-            }else{
-            Text(text = "Kategórie", style = androidx.compose.material.MaterialTheme.typography.h4)
-            Text("Kliknutím upravíte kategóriu a posunutím ju môžte vymazať")
-            Button(onClick = { showDialog = true }, colors = ButtonDefaults.buttonColors(Color.Red)) {
-                Text(text = "Vymazať všetky kategórie")
-            }}
+            } else {
+                Text(text = "Kategórie", style = MaterialTheme.typography.headlineMedium)
+                Text("Kliknutím upravíte kategóriu a posunutím ju môžte vymazať")
+                Button(
+                    onClick = { showDialog = true },
+                    colors = ButtonDefaults.buttonColors(Color.Red)
+                ) {
+                    Text(text = "Vymazať všetky kategórie")
+                }
+            }
+
+            // LazyColumn pre zobrazenie zoznamu kategórií
             LazyColumn {
                 items(uiState.kategorie) { kategoria ->
                     SwipeableKategoriaItem(
@@ -103,6 +117,7 @@ fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: Kateg
 fun SwipeableKategoriaItem(kategoria: Kategoria, onDelete: () -> Unit, onClick: () -> Unit) {
     var offsetX by remember { mutableStateOf(0f) }
 
+    // Box komponent, ktorý umožňuje horizontálne gestá na swipe
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -110,13 +125,13 @@ fun SwipeableKategoriaItem(kategoria: Kategoria, onDelete: () -> Unit, onClick: 
                 detectHorizontalDragGestures(
                     onHorizontalDrag = { _, dragAmount ->
                         offsetX += dragAmount
-                        offsetX = offsetX.coerceIn(-200f, 0f)
+                        offsetX = offsetX.coerceIn(-200f, 0f) // Ograničenie offsetu medzi -200f a 0f
                     },
                     onDragEnd = {
                         if (offsetX < -100f) {
-                            onDelete()
+                            onDelete() // Vymazanie kategórie ak je swipe dostatočne veľký
                         } else {
-                            offsetX = 0f
+                            offsetX = 0f // Resetovanie offsetu ak swipe nie je dostatočne veľký
                         }
                     }
                 )
@@ -125,6 +140,7 @@ fun SwipeableKategoriaItem(kategoria: Kategoria, onDelete: () -> Unit, onClick: 
             .padding(8.dp)
             .clickable { onClick() }
     ) {
+        // Riadok pre zobrazenie kategórie
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -139,6 +155,7 @@ fun SwipeableKategoriaItem(kategoria: Kategoria, onDelete: () -> Unit, onClick: 
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = kategoria.nazov, style = MaterialTheme.typography.bodySmall)
         }
+        // Zobrazenie textu "Vymazať" ak je swipe dostatočne veľký
         if (offsetX < -100f) {
             Text(
                 text = "Vymazať",
@@ -150,11 +167,13 @@ fun SwipeableKategoriaItem(kategoria: Kategoria, onDelete: () -> Unit, onClick: 
         }
     }
 }
+
 @Composable
 fun DialogVymazatKategoriu(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    // AlertDialog pre potvrdenie vymazania všetkých kategórií
     androidx.compose.material.AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = "Vymazanie všetkých kategórií") },

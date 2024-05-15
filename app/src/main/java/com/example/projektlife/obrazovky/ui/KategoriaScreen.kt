@@ -2,8 +2,6 @@ package com.example.projektlife.obrazovky.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -24,7 +21,6 @@ import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,21 +43,21 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: KategoriaView) {
-    var nazov by rememberSaveable { mutableStateOf("") }
-    var selectedTyp by rememberSaveable { mutableStateOf(Typ.POSITIVNA) }
-    val isLandscape = isLandscape()
+    var nazov by rememberSaveable { mutableStateOf("") } // Ukladanie a obnovovanie stavu pre názov kategórie
+    var selectedTyp by rememberSaveable { mutableStateOf(Typ.POSITIVNA) } // Ukladanie a obnovovanie stavu pre typ kategórie
+    val isLandscape = isLandscape() // Skontroluje, či je zariadenie v landscape móde
 
-    // Create a custom Saver for Color
+    // Vytvorenie vlastného Saver pre farbu
     val colorSaver = Saver<Color, Int>(
-        save = { it.toArgb() },
-        restore = { Color(it) }
+        save = { it.toArgb() }, // Uloženie farby ako integer hodnoty
+        restore = { Color(it) } // Obnovenie farby z integer hodnoty
     )
 
-    // Use rememberSaveable to save and restore the color state
+    // Použitie rememberSaveable na uloženie a obnovenie stavu farby
     var vybrataColor by rememberSaveable(stateSaver = colorSaver) { mutableStateOf(Color.Red) }
     val vybrataColorState = remember { mutableStateOf(vybrataColor) }
 
-    // Update the actual color when the state color changes
+    // Aktualizácia skutočnej farby, keď sa zmení stav farby
     vybrataColor = vybrataColorState.value
 
     if (isLandscape) {
@@ -76,7 +72,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState()), // Povolenie vertikálneho skrolovania
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -99,13 +95,14 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                                 selected = type == selectedTyp,
                                 onClick = { selectedTyp = type }
                             )
-                            Text(text = type.name.capitalize())
+                            Text(text = type.name)
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Text("Vyberte farbu:")
+                // Komponent na výber farby
                 VyberFarbu(selectedColor = vybrataColorState)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text("Typ kategórie: ${selectedTyp.name}")
@@ -114,7 +111,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                     modifier = Modifier
                         .size(100.dp)
                         .border(2.dp, Color.Black)
-                        .background(color = vybrataColorState.value)
+                        .background(color = vybrataColorState.value) // Nastavenie pozadia s vybranou farbou
                 )
                 Row {
                     Button(onClick = {
@@ -127,7 +124,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                                 )
                             )
                         }
-                        navController.popBackStack()
+                        navController.popBackStack() // Navigácia späť po uložení
                     }) {
                         Text("Uložiť kategóriu")
                     }
@@ -139,7 +136,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 10.dp, vertical = 50.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState()), // Povolenie vertikálneho skrolovania
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text("Vytvoriť novú kategóriu", style = MaterialTheme.typography.h4)
@@ -164,6 +161,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                 }
             }
             Text("Vyberte farbu:")
+            // Komponent na výber farby
             VyberFarbu(selectedColor = vybrataColorState)
             Spacer(modifier = Modifier.height(20.dp))
             Text("Typ kategórie: ${selectedTyp.name}")
@@ -172,7 +170,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                 modifier = Modifier
                     .size(100.dp)
                     .border(2.dp, Color.Black)
-                    .background(color = vybrataColorState.value)
+                    .background(color = vybrataColorState.value) // Nastavenie pozadia s vybranou farbou
             )
             Button(onClick = {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -184,7 +182,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                         )
                     )
                 }
-                navController.navigate("main_screen")
+                navController.navigate("main_screen") // Navigácia na hlavnú obrazovku po uložení
             }) {
                 Text("Uložiť kategóriu")
             }
@@ -192,25 +190,3 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
     }
 }
 
-@Composable
-fun VyberFarbu(selectedColor: MutableState<Color>) {
-    val colors = listOf(Color.Red, Color.Green, Color.Blue, Color(255, 165, 0), Color.Cyan, Color.Magenta)
-    val scrollState = rememberScrollState()
-
-    Row(modifier = Modifier.horizontalScroll(scrollState)) {
-        colors.forEach { color ->
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .padding(8.dp)
-                    .border(
-                        width = if (selectedColor.value == color) 2.dp else 0.dp,
-                        color = Color.Black,
-                        shape = CircleShape
-                    )
-                    .background(color = color, shape = CircleShape)
-                    .clickable { selectedColor.value = color }
-            )
-        }
-    }
-}

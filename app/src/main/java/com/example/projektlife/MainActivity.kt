@@ -1,6 +1,5 @@
 package com.example.projektlife
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,6 +30,7 @@ import com.example.projektlife.viewmodel.AktivitaView
 import com.example.projektlife.viewmodel.KategoriaView
 import com.example.projektlife.viewmodel.UlozeneView
 
+// Definícia triedy Screen, ktorá reprezentuje rôzne obrazovky v aplikácii
 sealed class Screen(val route: String) {
     object MainScreen : Screen("main_screen")
     object CreateCategory : Screen("add_kategoria")
@@ -40,58 +40,63 @@ sealed class Screen(val route: String) {
     object Nastavenia : Screen("nastavenia")
 }
 
+// Hlavná aktivita aplikácie
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge() // Povolenie edge-to-edge režimu pre celú obrazovku
         setContent {
-            ProjektLifeTheme {
-                AppNavigator();
-                }
+            ProjektLifeTheme { // Nastavenie témy aplikácie
+                AppNavigator() // Spustenie composable funkcie pre navigáciu
             }
         }
     }
+}
+
+// Composable funkcia pre navigáciu v aplikácii
 @Composable
 fun AppNavigator() {
-    val navController = rememberNavController()
+    val navController = rememberNavController() // Vytvorenie navigačného kontrolóra
     val context = LocalContext.current.applicationContext
-    val db = remember { Databaza.getDatabase(context) }
+    val db = remember { Databaza.getDatabase(context) } // Získanie databázy
 
+    // Vytvorenie repository a view modelov
     val kategoriaRepository = remember { KategorieRepository(db.kategoriaDao()) }
-    val aktivitaRepository = remember { AktivitaRepository(db.aktivitaDao(),db.kategoriaDao()) }
+    val aktivitaRepository = remember { AktivitaRepository(db.aktivitaDao(), db.kategoriaDao()) }
     val ulozeneRepository = remember { UlozeneRepository(db.ulozeneDao()) }
-    val viewModelFactory = remember { DatabaseFactory(kategoriaRepository, aktivitaRepository,ulozeneRepository) }
+    val viewModelFactory = remember { DatabaseFactory(kategoriaRepository, aktivitaRepository, ulozeneRepository) }
 
     val kategoriaViewModel: KategoriaView = viewModel(factory = viewModelFactory)
     val aktivitaViewModel: AktivitaView = viewModel(factory = viewModelFactory)
     val ulozeneViewModel: UlozeneView = viewModel(factory = viewModelFactory)
 
+    // Definícia navigačného hostiteľa
     NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
-        composable(Screen.MainScreen.route) { MainScreen(navController,aktivitaViewModel,ulozeneViewModel) }
+        composable(Screen.MainScreen.route) {
+            MainScreen(navController, aktivitaViewModel, ulozeneViewModel)
+        }
         composable(Screen.CreateCategory.route) {
-            KategoriaScreen(navController,kategoriaViewModel)
+            KategoriaScreen(navController, kategoriaViewModel)
         }
         composable(Screen.UpravitKategoriu.route) {
-            KategorieUpravaScreen(navController = navController,kategoriaViewModel)
+            KategorieUpravaScreen(navController = navController, kategoriaViewModel)
         }
         composable(Screen.Nastavenia.route) {
-            NastaveniaScreen(navController = navController,kategoriaViewModel,aktivitaViewModel,ulozeneViewModel)
+            NastaveniaScreen(navController = navController, kategoriaViewModel, aktivitaViewModel, ulozeneViewModel)
         }
+        // Definícia obrazovky pre editáciu kategórie s argumentom kategoriaId
         composable(
             route = "kategoria_edit/{kategoriaId}",
             arguments = listOf(navArgument("kategoriaId") { type = NavType.IntType })
         ) { backStackEntry ->
             val kategoriaId = backStackEntry.arguments?.getInt("kategoriaId") ?: return@composable
-            KategoriaEditScreen(navController = navController, kategoriaId = kategoriaId,kategoriaViewModel)
+            KategoriaEditScreen(navController = navController, kategoriaId = kategoriaId, kategoriaViewModel)
         }
         composable(Screen.Statistika.route) {
-            StatisticsScreen(navController = navController,ulozeneViewModel)
+            StatisticsScreen(navController = navController, ulozeneViewModel)
         }
         composable(Screen.CreateAction.route) {
-
-            AktivitaScreen(navController,kategoriaViewModel,aktivitaViewModel)
+            AktivitaScreen(navController, kategoriaViewModel, aktivitaViewModel)
         }
     }
 }
-
-

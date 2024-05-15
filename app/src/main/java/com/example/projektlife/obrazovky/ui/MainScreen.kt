@@ -1,6 +1,5 @@
 package com.example.projektlife.obrazovky.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -49,14 +48,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.projektlife.R
 import com.example.projektlife.dataclass.Aktivita
 import com.example.projektlife.dataclass.Kategoria
 import com.example.projektlife.viewmodel.AktivitaView
@@ -71,8 +67,9 @@ import kotlin.math.roundToInt
 @Composable
 fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = viewModel(), ulozeneViewModel: UlozeneView = viewModel()) {
     var selectedItem by remember { mutableStateOf(BottomNavItem.MainScreen) }
-    val uiState by aktivitaView.uiState.collectAsState()
 
+
+    // Načítanie všetkých aktivít pri spustení composable
     LaunchedEffect(Unit) {
         aktivitaView.getAllAktivitas()
     }
@@ -91,6 +88,7 @@ fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = vi
             }
         }
     ) { innerPadding ->
+        // Rozloženie pre landscape režim
         if (isLandscape()) {
             Row(
                 modifier = Modifier
@@ -115,6 +113,7 @@ fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = vi
                 }
             }
         } else {
+            // Rozloženie pre portrait režim
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -133,6 +132,7 @@ fun MainScreen(navController: NavHostController, aktivitaView: AktivitaView = vi
 fun AktivitaList(aktivitaView: AktivitaView, ulozeneViewModel: UlozeneView) {
     val uiState by aktivitaView.uiState.collectAsState()
 
+    // Zobrazenie zoznamu aktivít
     LazyColumn {
         items(uiState.aktivity) { aktivita ->
             val kategoria = uiState.kategorie[aktivita.kategoriaId]
@@ -161,6 +161,7 @@ fun AktivitaItem(
     val swipeThreshold = -100f
     val maxOffsetX = -200f
 
+    // Box komponent pre swipe gestá a zobrazenie detailov aktivity
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -181,7 +182,7 @@ fun AktivitaItem(
                 )
             }
     ) {
-        Row(
+        Row(//Nastavovanie výzoru tlačidla podľa jeho vlastností
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .offset { IntOffset(offsetX.roundToInt(), 0) }
@@ -268,12 +269,16 @@ fun AktivitaItem(
 }
 
 @Composable
-fun ExpandableFloatingActionButton(navController: NavHostController) {
+fun ExpandableFloatingActionButton(navController: NavHostController) {//Tlačítko na zobrazenie pridania kategórie alebo aktivít
     var isExpanded by remember { mutableStateOf(false) }
+    var padding = 2.dp
+    if (isLandscape()) {
+        padding = 30.dp
+    }
     Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(2.dp),
-        modifier = Modifier.padding(horizontal = 2.dp, vertical = 2.dp)
+        modifier = Modifier.padding(horizontal = padding, vertical = padding)
     ) {
         if (isExpanded) {
             FloatingActionButton(onClick = { navController.navigate("add_kategoria") }) {
@@ -291,7 +296,7 @@ fun ExpandableFloatingActionButton(navController: NavHostController) {
     }
 }
 
-enum class BottomNavItem(val label: String, val icon: ImageVector) {
+enum class BottomNavItem(val label: String, val icon: ImageVector) {//Obrázky pre menu na navigáciu aplikáciou
     Statistics("Štatistiky", Icons.Default.DateRange),
     MainScreen("Domov", Icons.Default.Home),
     CategoryView("Kategórie", Icons.Default.List),
@@ -299,7 +304,7 @@ enum class BottomNavItem(val label: String, val icon: ImageVector) {
 }
 
 @Composable
-fun BottomNavBar(
+fun BottomNavBar(//Spodná časť obrazovky ktorá zobrazuje menu na navigáciu aplikáciou
     selectedItem: BottomNavItem,
     onItemSelected: (BottomNavItem) -> Unit
 ) {
@@ -318,7 +323,7 @@ fun BottomNavBar(
 @Composable
 fun TopSection(ulozeneViewModel: UlozeneView) {
     val uiState by ulozeneViewModel.uiState.collectAsState()
-
+    //Zobrazovanie grafu ktorý ukazuje iba dáta z dneskajška
     LaunchedEffect(Unit) {
         val today = Date()
         val startDate = Calendar.getInstance().apply {
@@ -338,7 +343,7 @@ fun TopSection(ulozeneViewModel: UlozeneView) {
         ulozeneViewModel.getUlozeneByDateRange(startDate, endDate)
     }
 
-    val pieChartData = if (uiState.ulozene.isNotEmpty()) {
+    val pieChartData = if (uiState.ulozene.isNotEmpty()) {//Špecifikácia dát pre zobrazenie koláčovým grafom
         PieChartData(
             slices = uiState.ulozene.groupBy { it.kategoriaId }.map { (kategoriaId, ulozene) ->
                 val totalWeight = ulozene.sumOf { it.vaha }
@@ -353,6 +358,7 @@ fun TopSection(ulozeneViewModel: UlozeneView) {
         )
     }
 
+    // Box komponent pre zobrazenie koláčového grafu
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -360,19 +366,10 @@ fun TopSection(ulozeneViewModel: UlozeneView) {
             .background(Color(0xFFF7F7F7))
             .padding(30.dp)
     ) {
-        PieChart(
+        PieChart( //Zobrazenie koláčového grafu
             pieChartData = pieChartData,
             modifier = Modifier.size(200.dp),
             sliceDrawer = SimpleSliceDrawer()
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.pfp),
-            contentDescription = "Profile Picture",
-            modifier = Modifier
-                .size(100.dp)
-                .align(Alignment.Center),
-            contentScale = ContentScale.Crop
         )
     }
 }

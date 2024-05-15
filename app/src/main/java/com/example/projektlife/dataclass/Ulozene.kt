@@ -5,11 +5,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "ulozene")
 data class Ulozene(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val aktivitaId: Int,
-    val kategoriaId: Int,
-    val nazov: String,
-    val farba: String,
-    val vaha: Int,
-    val date: String
+    @PrimaryKey(autoGenerate = true) val id: Int = 0, // Primárny kľúč s automatickým generovaním hodnôt
+    val aktivitaId: Int, // ID aktivity, odkaz na tabuľku aktivita
+    val kategoriaId: Int, // ID kategórie, odkaz na tabuľku kategoria
+    val nazov: String, // Názov uloženého záznamu
+    val farba: String, // Farba, podľa kategórie
+    val vaha: Int, // Váha podľa aktivity
+    val date: String // Dátum uloženia záznamu, uložený ako text
 )

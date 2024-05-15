@@ -32,8 +32,8 @@ fun NastaveniaScreen(
     aktivitaView: AktivitaView = viewModel(),
     ulozeneView: UlozeneView = viewModel()
 ) {
-    var selectedItem by remember { mutableStateOf(BottomNavItem.Settings) }
-    val isLandscape = isLandscape()
+    var selectedItem by remember { mutableStateOf(BottomNavItem.Settings) } // Udržiava aktuálne vybranú položku v spodnej navigačnej lište
+    val isLandscape = isLandscape() // Určuje, či je zariadenie v landscape režime
 
     Scaffold(
         bottomBar = {
@@ -54,11 +54,12 @@ fun NastaveniaScreen(
                 .padding(innerPadding)
                 .padding(vertical = 30.dp, horizontal = 16.dp)
         ) {
-            Text(text = "Nastavenia", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Nastavenia", style = MaterialTheme.typography.headlineMedium) // Zobrazuje nadpis obrazovky
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp)) // Pridáva medzeru medzi nadpis a obsah
 
             if (isLandscape) {
+                // Rozloženie pre landscape režim
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -110,6 +111,7 @@ fun NastaveniaScreen(
                 }
 
             } else {
+                // Rozloženie pre portrait režim
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {

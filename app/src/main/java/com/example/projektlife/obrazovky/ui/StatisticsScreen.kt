@@ -1,7 +1,6 @@
 package com.example.projektlife.obrazovky.ui
 
 import android.app.DatePickerDialog
-import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -62,6 +60,7 @@ fun StatisticsScreen(
     var endDate by rememberSaveable { mutableStateOf(getEndOfMonth()) }
     var selectedDate by rememberSaveable { mutableStateOf<Date?>(null) }
 
+    // Spustí sa pri načítaní composable, aby sa načítali údaje zadaného rozsahu dátumov
     LaunchedEffect(Unit) {
         ulozeneView.getUlozeneByDateRange(startDate, endDate)
     }
@@ -80,6 +79,7 @@ fun StatisticsScreen(
         }
     ) { innerPadding ->
         if (isLandscape()) {
+            // Rozloženie pre landscape režim
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -112,7 +112,7 @@ fun StatisticsScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    CategoryList(ulozeneView = ulozeneView, selectedDate = selectedDate)
+                    CategoryList(ulozeneView = ulozeneView, selectedDate = selectedDate, isLandscape = true)
                 }
                 Column(
                     modifier = Modifier
@@ -123,11 +123,12 @@ fun StatisticsScreen(
                         ulozeneView = ulozeneView,
                         onDateSelected = { date ->
                             selectedDate = date
-                        },
+                        }
                     )
                 }
             }
         } else {
+            // Rozloženie pre portrait režim
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -140,7 +141,7 @@ fun StatisticsScreen(
                     ulozeneView = ulozeneView,
                     onDateSelected = { date ->
                         selectedDate = date
-                    },
+                    }
                 )
                 Row {
                     DatePicker(
@@ -168,7 +169,7 @@ fun StatisticsScreen(
 }
 
 @Composable
-fun DatePicker(label: String, selectedDate: Date, onDateSelected: (Date) -> Unit) {
+fun DatePicker(label: String, selectedDate: Date, onDateSelected: (Date) -> Unit) {//Funkcia pre výber dátumu, a jeho zobrazenie na tlačítku po vybratí
     val context = LocalContext.current
     val calendar = Calendar.getInstance().apply { time = selectedDate }
 
@@ -194,9 +195,9 @@ fun DatePicker(label: String, selectedDate: Date, onDateSelected: (Date) -> Unit
 }
 
 @Composable
-fun LineChart(
+fun LineChart(//Zobrazenie čiarového grafu
     ulozeneView: UlozeneView,
-    onDateSelected: (Date) -> Unit,
+    onDateSelected: (Date) -> Unit
 ) {
     val uiState by ulozeneView.uiState.collectAsState()
     val context = LocalContext.current
@@ -207,18 +208,18 @@ fun LineChart(
                 description.isEnabled = false
                 setDrawGridBackground(false)
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
-                xAxis.valueFormatter = object : ValueFormatter() {
+                xAxis.valueFormatter = object : ValueFormatter() { //Ukazuje dátumi prvkov na osi X
                     private val dateFormat = SimpleDateFormat("dd.MM", Locale.getDefault())
                     override fun getFormattedValue(value: Float): String {
                         return dateFormat.format(Date(value.toLong()))
                     }
                 }
-                xAxis.granularity = 1f
+                xAxis.granularity = 1f//Pre jednoduchšie kliknutie na dátum pre zobrazenie vlastnej legendy z váhami
                 axisLeft.granularity = 1f
-                legend.isEnabled = false
+                legend.isEnabled = false // Skryje legendu pod grafom
             }
         },
-        update = { chart ->
+        update = { chart ->//Aktualizácia grafu po kliknutí na dátum
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
             val aggregatedData = uiState.ulozene.groupBy { it.nazov to it.farba }
@@ -246,7 +247,7 @@ fun LineChart(
             chart.data = LineData(dataSets)
             chart.invalidate()
 
-            chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {//Ukáže legendu pre daný deň
                 override fun onValueSelected(e: Entry?, h: Highlight?) {
                     e?.let {
                         val selectedDate = Date(it.x.toLong())
@@ -267,7 +268,7 @@ fun LineChart(
 }
 
 @Composable
-fun CategoryList(ulozeneView: UlozeneView, selectedDate: Date?, isLandscape: Boolean = false) {
+fun CategoryList(ulozeneView: UlozeneView, selectedDate: Date?, isLandscape: Boolean = false) {//Ukážka legendy pre grafy
     val ulozeneUiState by ulozeneView.uiState.collectAsState()
 
     val filteredUlozene = if (selectedDate != null) {
@@ -327,31 +328,5 @@ fun CategoryList(ulozeneView: UlozeneView, selectedDate: Date?, isLandscape: Boo
             }
         }
     }
-}
-
-fun getStartOfMonth(): Date {
-    return Calendar.getInstance().apply {
-        set(Calendar.DAY_OF_MONTH, 1)
-        set(Calendar.HOUR_OF_DAY, 0)
-        set(Calendar.MINUTE, 0)
-        set(Calendar.SECOND, 0)
-        set(Calendar.MILLISECOND, 0)
-    }.time
-}
-
-fun getEndOfMonth(): Date {
-    return Calendar.getInstance().apply {
-        set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
-        set(Calendar.HOUR_OF_DAY, 23)
-        set(Calendar.MINUTE, 59)
-        set(Calendar.SECOND, 59)
-        set(Calendar.MILLISECOND, 999)
-    }.time
-}
-
-@Composable
-fun isLandscape(): Boolean {
-    val configuration = LocalConfiguration.current
-    return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 }
 
