@@ -61,7 +61,7 @@ fun KategorieUpravaScreen(navController: NavHostController, kategoriaView: Kateg
                 when (item) {
                     BottomNavItem.Statistics -> navController.navigate("statistics")
                     BottomNavItem.MainScreen -> navController.navigate("main_screen")
-                    BottomNavItem.CategoryView -> navController.navigate("kategoria_uprava")
+                    BottomNavItem.CategoryView -> navController.navigate("kategorie_uprava")
                     BottomNavItem.Settings -> navController.navigate("nastavenia")
                 }
             })

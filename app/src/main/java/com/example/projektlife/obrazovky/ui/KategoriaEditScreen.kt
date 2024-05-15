@@ -165,6 +165,6 @@ fun KategoriaEditScreen(navController: NavHostController, kategoriaId: Int, kate
             }
         }
     } else {
-        Text("Kategoria not found", style = MaterialTheme.typography.headlineMedium)
+        navController.popBackStack()
     }
 }

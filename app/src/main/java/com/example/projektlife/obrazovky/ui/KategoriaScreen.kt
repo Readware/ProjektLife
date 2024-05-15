@@ -111,7 +111,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                                 )
                             )
                         }
-                        navController.navigate("main_screen")
+                        navController.popBackStack()
                     }) {
                         Text("Uložiť kategóriu")
                     }
@@ -143,7 +143,7 @@ fun KategoriaScreen(navController: NavHostController, kategoriaViewModel: Katego
                             selected = type == selectedTyp,
                             onClick = { selectedTyp = type }
                         )
-                        Text(text = type.name.capitalize())
+                        Text(text = type.name)
                     }
                 }
             }

@@ -88,6 +88,7 @@ fun AppNavigator() {
             StatisticsScreen(navController = navController,ulozeneViewModel)
         }
         composable(Screen.CreateAction.route) {
+
             AktivitaScreen(navController,kategoriaViewModel,aktivitaViewModel)
         }
     }

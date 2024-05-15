@@ -36,7 +36,6 @@ import com.example.projektlife.dataclass.Kategoria
 import com.example.projektlife.viewmodel.AktivitaView
 import com.example.projektlife.viewmodel.KategoriaView
 
-
 @Composable
 fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaView = viewModel(), aktivitaView: AktivitaView = viewModel()) {
     val uiState by kategoriaView.uiState.collectAsState()
@@ -70,7 +69,8 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
                 DropdownMenuBox(
                     options = uiState.kategorie,
                     selectedOption = selectedKategoria,
-                    onOptionSelected = { selectedKategoria = it }
+                    onOptionSelected = { selectedKategoria = it },
+                    navController = navController
                 )
                 OutlinedTextField(
                     value = nazov,
@@ -125,7 +125,8 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
                 DropdownMenuBox(
                     options = uiState.kategorie,
                     selectedOption = selectedKategoria,
-                    onOptionSelected = { selectedKategoria = it }
+                    onOptionSelected = { selectedKategoria = it },
+                    navController = navController
                 )
                 OutlinedTextField(
                     value = nazov,
@@ -166,33 +167,45 @@ fun AktivitaScreen(navController: NavHostController, kategoriaView: KategoriaVie
     }
 }
 
-
 @Composable
 fun DropdownMenuBox(
     options: List<Kategoria>,
     selectedOption: Kategoria?,
-    onOptionSelected: (Kategoria) -> Unit
+    onOptionSelected: (Kategoria) -> Unit,
+    navController: NavHostController
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box {
-        Button(onClick = { expanded = true },
+        val buttonText = if (options.isEmpty()) "Vytvorte kategóriu" else (selectedOption?.nazov ?: "Vyberte kategóriu")
+        Button(
+            onClick = {
+                if (options.isEmpty()) {
+                    navController.navigate("add_kategoria")
+                } else {
+                    expanded = true
+                }
+            },
             colors = ButtonDefaults.buttonColors(backgroundColor = selectedOption?.let { parseColor(it.farba) } ?: Color.Gray),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.Center)
         ) {
-            Text(selectedOption?.nazov ?: "Vyberte kategóriu")
+            Text(buttonText)
         }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
             options.forEach { option ->
-                DropdownMenuItem(onClick = {
-                    onOptionSelected(option)
-                    expanded = false
-                }, modifier = Modifier.background(parseColor(option.farba)), text = { Text(text = option.nazov, color = Color.Black) })
+                DropdownMenuItem(
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    },
+                    modifier = Modifier.background(parseColor(option.farba)),
+                    text = { Text(text = option.nazov, color = Color.Black) }
+                )
             }
         }
     }
@@ -210,3 +223,4 @@ fun parseColor(colorString: String): Color {
         Color.Unspecified
     }
 }
+
